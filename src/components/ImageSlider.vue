@@ -3,10 +3,10 @@
   <div class="slider">
     <i @click="move(-1)" class="button-left"></i>
     <i @click="move(1)" class="button-right"></i>
-    <div :style="styling" class="imgs" ref="slider">
-      <div v-for="index in 3" 
-        :key="index" 
-        :style="'background-image: url(' + require(`@/assets/slider-${index}.jpeg`) + ')'"
+    <div class="title">EliteAuto</div>
+    <div :style="state.styling" class="imgs" ref="slider">
+      <div v-for="img in state.images" :key="img"
+        :style="'background-image: url(' + img + ')'"
         alt="">
         
       </div>
@@ -20,38 +20,52 @@ import { onMounted, reactive, ref } from '@vue/runtime-core';
 
 export default {
   setup() {
-
     const slider = ref(null);
-    const styling = reactive({});
+    const state = reactive({
+      images: [...Array(3).keys()].map((i,c) => require(`@/assets/slider-${c+1}.jpeg`)),
+      styling: {}
+    });
     
-    let pos = -1;
-    let childCount = 0;
+
     let timeout;
+    let direction = -1;
+
+    function timeoutMove() {
+      timeout = setTimeout(move, 2000);
+    }
 
     function move(d=1) {
       clearTimeout(timeout);
-      pos += d;
 
-      if (pos < 0) {
-        pos = childCount-1;
-      } else if (pos >= childCount) {
-        pos = 0;
+      state.styling.transition = '0.5s transform ease-in-out';
+      state.styling.transform = `translateX(-${(d+1)/state.images.length*100}%)`;
+      direction = d;
+
+      timeoutMove();
+    }
+    function transitionEnd() {
+      if (direction == 1) {
+        state.images.push(state.images[0]);
+        state.images.shift();
+      } else if (direction == -1) {
+        state.images.unshift(state.images[state.images.length-1]);
+        state.images.pop();
       }
-      styling.transform = `translateX(-${pos/childCount*100}%)`;
-
-      timeout = setTimeout(move, 2000);
+      delete state.styling.transition;
+      state.styling.transform = `translateX(-${1/state.images.length*100}%)`;
     }
     
     onMounted(() => {
-      childCount = slider.value.childElementCount;
-      styling.width = `${childCount*100}%`;
-      move();
+      slider.value.addEventListener('transitionend', transitionEnd);
+      state.styling.width = `${state.images.length*100}%`;
+      transitionEnd();
+      timeoutMove();
     });
 
     return {
-      styling,
-      slider,
-      move
+      move,
+      state,
+      slider
     }
     
   }
@@ -60,6 +74,8 @@ export default {
 
 <style lang="scss" scoped>
 
+@import '@/scss/icons';
+
 .slider {
   height: 800px;
   position: relative;
@@ -67,7 +83,6 @@ export default {
   .imgs {
     height: 100%;
     display: flex;
-    transition: 0.5s ease-in-out;
 
     div {
       height: 100%;
@@ -77,6 +92,18 @@ export default {
       background-size: cover;
       filter: brightness(30%);
     }
+  }
+
+  .title {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 50pt;
+    color: white;
+    font-weight: bold;
+    user-select: none;
   }
 
   %buttons {
@@ -95,13 +122,13 @@ export default {
   }
 
   .button-left {
-    @extend .chevron-left;
+    @extend %chevron-left;
     @extend %buttons;
     left: 30px;
   }
 
   .button-right {
-    @extend .chevron-right;
+    @extend %chevron-right;
     @extend %buttons;
     right: 30px;
   }

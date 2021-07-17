@@ -17,7 +17,7 @@ export default {
 
 <style lang="scss">
 
-
+@import "./scss/fonts";
 
 #app {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
