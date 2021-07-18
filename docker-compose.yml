@@ -1,0 +1,27 @@
+version: "3"  # optional since v1.27.0
+services:
+  web:
+    image: nginx:latest
+    container_name: "eliteauto_web"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    # - ./data/img/:/var/www/html/img/:rw
+  db:
+    image: postgres:latest
+    container_name: "eliteauto_db"
+    volumes:
+      - ./data/psql:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=eliteauto
+  app:
+    image: node:14
+    container_name: "eliteauto_app"
+    command: "npm run dev"
+    working_dir: /usr/src/app
+      #entrypoint: ["/bin/sh","-c"]
+    volumes: 
+      - .:/usr/src/app
+    command: /bin/bash -c "npm --prefix backend-express install && npm --prefix backend-express run dev"
