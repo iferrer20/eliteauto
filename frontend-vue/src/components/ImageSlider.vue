@@ -31,7 +31,7 @@ export default {
     let direction = -1;
 
     function timeoutMove() {
-      timeout = setTimeout(move, 2000);
+      timeout = setTimeout(move, 5000);
     }
 
     function move(d=1) {
@@ -92,7 +92,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center 60%;
       background-size: cover;
-      filter: brightness(30%);
+      filter: brightness(50%);
     }
   }
 
@@ -108,7 +108,7 @@ export default {
     user-select: none;
   }
 
-  %buttons {
+  @mixin buttons {
     position: absolute;
     color: white;
     z-index: 1;
@@ -124,14 +124,14 @@ export default {
   }
 
   .button-left {
-    @extend %chevron-left;
-    @extend %buttons;
+    @include chevron-left;
+    @include buttons;
     left: 30px;
   }
 
   .button-right {
-    @extend %chevron-right;
-    @extend %buttons;
+    @include chevron-right;
+    @include buttons;
     right: 30px;
   }
 

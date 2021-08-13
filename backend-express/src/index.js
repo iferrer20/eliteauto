@@ -1,11 +1,7 @@
 import express from 'express';
+import routes from './api';
 
 const app = express();
+app.use("/api/", routes);
 
-app.get("/", (req, res) => {
-    res.jsonp({
-        message: "Hello world!"
-    });
-});
-
-app.listen(8000);
+app.listen(80);

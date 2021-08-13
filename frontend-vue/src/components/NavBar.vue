@@ -1,6 +1,6 @@
 
 <template>
-  <div class="navbar" :class="{'opacity': route.name == 'Home'}">
+  <div :class="['navbar', {'opacity': route.name == 'Home'}]">
     <router-link :to="{ name: 'Home'}" class="logo"><img src="../assets/logo.png"></router-link>
     <div class="navbar-menu">
       <router-link :to="{ name: 'Cars' }">
@@ -30,7 +30,6 @@ export default {
 
 $navbar-color: rgb(0, 0, 0);
 $navbar-color-opacity: rgba($navbar-color, 0.2);
-$navbar-height: 70px;
 
 .navbar {
   overflow-x: hidden;
@@ -41,13 +40,14 @@ $navbar-height: 70px;
   display: flex;
   padding: 15px;
   box-sizing: border-box;
-  position: absolute;
+  position: sticky;
   z-index: 1;
   top: 0px;
   transition: background-color 0.2s ease-in-out;
 
   &.opacity {
     background-color: $navbar-color-opacity;
+    position: absolute;
   }
 
   > * {
@@ -82,7 +82,7 @@ $navbar-height: 70px;
       font-weight: bold;
       background-color: rgba(0, 0, 0, 0);
       transition: background-color 0.2s ease-in-out;
-      border-radius: 10px;
+      border-radius: $border-radius;
       height: 100%;
       display: flex;
       justify-content: center;
@@ -100,26 +100,32 @@ $navbar-height: 70px;
   }
 
   img {
-    border-radius: 10px;
+    border-radius: $border-radius;
   }
 
-  @include small {
-    justify-content: space-around;
-    > img {
-      margin-left: 0px;
-    }
-    > * {
-      margin-left: 0px;
-      margin-right: 0px;
-    }
+@include small {
 
-    .navbar-menu {
-      div {
-        padding: 10px;
-      }
-    }
-    
+  justify-content: space-around;
+  > img {
+    margin-left: 0px;
   }
+  > * {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .logo {
+    margin-left: 0px;
+  }
+
+  .navbar-menu {
+    div {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+}
+
 }
 
 

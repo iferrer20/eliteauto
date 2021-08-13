@@ -1,4 +1,20 @@
 
 <template>
-  <div></div>
+  <div>
+    <CarList/>
+  </div>
+  
 </template>
+
+<script>
+import CarList from '../components/CarList.vue';
+
+export default {
+  components: {
+    CarList
+  }
+}
+</script>
+<style lang="sass" scoped>
+
+</style>
