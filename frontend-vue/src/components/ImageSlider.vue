@@ -1,8 +1,8 @@
 
 <template>
   <div class="slider">
-    <i @click="move(-1)" class="button-left"></i>
-    <i @click="move(1)" class="button-right"></i>
+    <i @click="move(-1)" class="button-left icon-chevron-left"></i>
+    <i @click="move(1)" class="button-right icon-chevron-right"></i>
     <div class="title">EliteAuto</div>
     <div :style="state.styling" class="imgs" ref="slider">
       <div v-for="img in state.images" :key="img"
@@ -124,13 +124,11 @@ export default {
   }
 
   .button-left {
-    @include chevron-left;
     @include buttons;
     left: 30px;
   }
 
   .button-right {
-    @include chevron-right;
     @include buttons;
     right: 30px;
   }

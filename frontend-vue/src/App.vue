@@ -22,7 +22,4 @@ export default {
 #app {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
-
-
 </style>

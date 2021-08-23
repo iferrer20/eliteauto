@@ -1,7 +1,29 @@
 
 <template>
   <div :class="['filter', {'opened': state.opened}]">
-    <Select @onOption="onBrand" :options='[
+    <Select @onOption="onBrand" :options="brands">
+    </Select>
+    <div class="open-button" @click="state.opened = !state.opened">
+      <i class="icon-chevron-right"></i>
+    </div>
+  </div>
+  
+</template>
+
+<script>
+import { reactive, toRef } from '@vue/reactivity';
+import Select from '../components/Select.vue';
+
+export default {
+  components: {
+    Select
+  },
+  props: ["filters"],
+  setup(props) {
+
+    let filters = toRef(props, 'filters');
+    
+    const brands = [
       "",
       "Audi",
       "BMW",
@@ -44,35 +66,18 @@
       "Toyota",
       "Volkswagen",
       "Volvo"
-      ]'>
-    </Select>
-    <div class="open-button" @click="state.opened = !state.opened">
-      <i></i>
-    </div>
-  </div>
-  
-</template>
-
-<script>
-import { reactive } from '@vue/reactivity';
-import Select from '../components/Select.vue';
-
-export default {
-  components: {
-    Select
-  },
-  setup() {
-    
+    ];
     const state = reactive({
       oepend: false
     });
-
-    function onBrand(x) {
-      console.log(x);
+  
+    function onBrand(brand, i) {
+      filters.value.brand = i-1;
     }
     return {
       state,
-      onBrand
+      onBrand,
+      brands
     }
   }
 }
@@ -90,6 +95,12 @@ export default {
   flex-shrink: 0;
   background-color: white;
   position: relative;
+
+  .open-button {
+    i {
+      display: none;
+    }
+  }
   @include shadow;
   
 @include small {
@@ -116,8 +127,8 @@ export default {
     align-items: center;
 
     i {
-      @include chevron-right;
       transition: 0.3s ease-in-out;
+      display: block;
     }
   }
 

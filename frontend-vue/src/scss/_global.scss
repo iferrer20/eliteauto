@@ -13,16 +13,16 @@ body,html {
   }
   
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: $white;
   }
   
   &::-webkit-scrollbar-thumb {
     border-radius: 40px;
-    background: #888;
+    background: $gray;
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: $dark-gray;
   }
 }
 
@@ -41,4 +41,15 @@ body,html {
 
 body {
   @extend %scroll;
+}
+
+input {
+  background-color: $white;
+  border: none;
+  outline: none;
+  margin: 5px;
+  padding: 10px;
+  font-size: 13pt;
+  border-radius: $border-radius;
+  width: 200px;
 }

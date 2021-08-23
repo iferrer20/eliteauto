@@ -96,10 +96,145 @@ CREATE TABLE cars (
 );
 
 
+DROP TABLE IF EXISTS admin_accounts;
+CREATE TABLE admin_accounts (
+    username VARCHAR(16) PRIMARY KEY NOT NULL,
+    hash CHAR(70) NOT NULL
+);
+
 -- Procedures
 
-DROP FUNCTION IF EXISTS CREATE_CAR;
-CREATE FUNCTION CREATE_CAR (
+CREATE EXTENSION pgcrypto; -- Import pgcrypto module
+
+DROP FUNCTION IF EXISTS NEW_ADMIN;
+CREATE FUNCTION NEW_ADMIN(
+    username varchar(16),
+    password varchar(128)
+) RETURNS void
+AS $$
+DECLARE
+    salt CHAR(6) := SUBSTR(MD5(RANDOM()::TEXT), 1, 6); -- Random salt
+    hash CHAR(70) := salt || ENCODE(HMAC(password, salt, 'sha256'), 'hex');
+BEGIN
+    INSERT INTO admin_accounts VALUES (username, hash);
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS ADMIN_LOGIN;
+CREATE FUNCTION ADMIN_LOGIN(
+    _username varchar(16),
+    password varchar(128)
+) RETURNS void
+AS $$
+DECLARE
+    realhash CHAR(70);
+    salt CHAR(6);
+BEGIN
+    SELECT ac.hash INTO realhash FROM admin_accounts AS ac WHERE ac.username = _username LIMIT 1;
+    IF realhash IS NOT NULL THEN
+        salt := SUBSTR(realhash, 1, 6);
+        IF (salt || ENCODE(HMAC(password, salt, 'sha256'), 'hex')) = realhash THEN
+            RETURN;
+        END IF;
+    END IF;
+
+    RAISE EXCEPTION 'Invalid username or password' USING ERRCODE = '45000';
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS GET_BRAND;
+CREATE FUNCTION GET_BRAND (
+    brand integer
+) RETURNS brand
+AS $$
+DECLARE
+    _brand brand;
+BEGIN
+    _brand := (ENUM_RANGE(NULL::brand))[brand+1];
+
+    IF _brand IS NULL THEN
+        RAISE EXCEPTION 'Invalid brand' USING ERRCODE = '45000';
+    END IF;
+    
+    RETURN _brand;
+END;
+$$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS GET_FUEL;
+CREATE FUNCTION GET_FUEL (
+    fuel integer
+) RETURNS fuel
+AS $$
+DECLARE
+    _fuel fuel;
+BEGIN
+    _fuel := (ENUM_RANGE(NULL::fuel))[fuel+1];
+
+    IF _fuel IS NULL THEN
+        RAISE EXCEPTION 'Invalid fuel' USING ERRCODE = '45000';
+    END IF;
+    
+    RETURN _fuel;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS GET_FUEL;
+CREATE FUNCTION GET_FUEL (
+    fuel integer
+) RETURNS fuel
+AS $$
+DECLARE
+    _fuel fuel;
+BEGIN
+    _fuel := (ENUM_RANGE(NULL::fuel))[fuel+1];
+
+    IF _fuel IS NULL THEN
+        RAISE EXCEPTION 'Invalid fuel' USING ERRCODE = '45000';
+    END IF;
+    
+    RETURN _fuel;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS GET_COLOR;
+CREATE FUNCTION GET_COLOR (
+    color integer
+) RETURNS color
+AS $$
+DECLARE
+    _color color;
+BEGIN
+    _color := (ENUM_RANGE(NULL::color))[color+1];
+
+    IF _color IS NULL THEN
+        RAISE EXCEPTION 'Invalid color' USING ERRCODE = '45000';
+    END IF;
+    
+    RETURN _color;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS GET_TRANSMISSION;
+CREATE FUNCTION GET_TRANSMISSION (
+    transmission integer
+) RETURNS transmission
+AS $$
+DECLARE
+    _transmission transmission;
+BEGIN
+    _transmission := (ENUM_RANGE(NULL::transmission))[transmission+1];
+
+    IF _transmission IS NULL THEN
+        RAISE EXCEPTION 'Invalid transmission' USING ERRCODE = '45000';
+    END IF;
+    
+    RETURN _transmission;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS NEW_CAR;
+CREATE FUNCTION NEW_CAR (
     brand integer, 
     model varchar,
     km integer,
@@ -117,24 +252,50 @@ AS $$
 BEGIN
     INSERT INTO cars VALUES (
         DEFAULT,
-        (ENUM_RANGE(NULL::brand))[brand+1],
+        GET_BRAND(brand),
         model,
         km,
         price,
         discount,
         engine,
         horsepower,
-        (ENUM_RANGE(NULL::fuel))[fuel+1],
-        (ENUM_RANGE(NULL::transmission))[transmission+1],
+        GET_FUEL(fuel),
+        GET_TRANSMISSION(transmission),
         year,
-        (ENUM_RANGE(NULL::color))[color+1]
+        GET_COLOR(color)
     );
 END; 
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS LIST_CARS;
+CREATE FUNCTION LIST_CARS (
+    _brand integer
+)
+RETURNS TABLE(
+    id INT,
+    brand brand,
+    model VARCHAR(64),
+    km INT,
+    price INT,
+    discount INT,
+    engine INT,
+    horsepower INT,
+    fuel fuel,
+    transmission transmission,
+    year INT,
+    color color
+)
+AS $$
+BEGIN
+    RETURN QUERY 
+        SELECT * FROM cars AS c WHERE _brand = -1 OR c.brand = GET_BRAND(_brand);
+END; 
+$$ LANGUAGE plpgsql;
+
+
 SELECT CREATE_CAR(
-    1, 
-    'a'::VARCHAR(64),
+    4, 
+    'asdasd'::VARCHAR(64),
     0,
     1000,
     100,

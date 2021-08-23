@@ -20,9 +20,4 @@ routes.delete("/", (req, res) => {
     });
 });
 
-
-
-
-
-
 export default routes;

@@ -10,13 +10,16 @@
       <div class="price">
         {{ price }}€
         <span class="discount" v-if="car.discount">{{ priceNoDiscount }}€</span>
+        
       </div>
+      <span class="remove icon-trash" v-if="isAdmin"></span>
     </div>
   </div>
 </template>
 
 <script>
 import { computed } from '@vue/runtime-core'
+import { useStore } from 'vuex';
 export default {
   props: ['car'],
   setup(props) {
@@ -26,21 +29,26 @@ export default {
     const price = computed(() => {
       return (props.car.price - (props.car.discount ? props.car.discount : 0)).toLocaleString();
     });
+    const store = useStore();
     const priceNoDiscount = computed(() => props.car.price.toLocaleString());
-
+    const isAdmin = computed(() => store.getters["user/isAdmin"]);
+    
     // car.price.value = 1000;
     return {
       title,
       percentDiscount,
       hasDiscount,
       price,
-      priceNoDiscount
+      priceNoDiscount,
+      isAdmin
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
+@import '@/scss/icons';
 
 .car {
   background-color: $white;
@@ -98,6 +106,11 @@ export default {
         font-weight: normal;
         text-decoration: line-through;
       }
+
+      
+    }
+    .remove {
+      margin-left: auto;
     }
   }
 

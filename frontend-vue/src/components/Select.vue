@@ -9,10 +9,10 @@
       <template v-else>
         Choose a brand
       </template>
-      <i></i>
+      <i class="icon-chevron-left"></i>
     </div>
     <div class="options">
-      <div v-for="option in options" :key="option" @click="onClickOption(option)">
+      <div v-for="(option, index) in options" :key="option" @click="onClickOption(option, index)">
         {{ option }}
       </div>
     </div>
@@ -29,10 +29,10 @@ export default {
       selected: ""
     });
 
-    function onClickOption(option) {
+    function onClickOption(option, i) {
       state.opened = false;
       state.selected = option;
-      ctx.emit("onOption", option);
+      ctx.emit("onOption", option, i);
     }
 
     return {
@@ -72,7 +72,6 @@ export default {
     @include shadow;
 
     i {
-      @include chevron-left;
       margin-left: auto;
       transform: rotate(-90deg);
       transition: transform 0.4s ease-in-out;
