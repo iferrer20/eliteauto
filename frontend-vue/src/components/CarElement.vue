@@ -12,7 +12,7 @@
         <span class="discount" v-if="car.discount">{{ priceNoDiscount }}€</span>
         
       </div>
-      <span class="remove icon-trash" v-if="isAdmin"></span>
+      <span class="delete icon-trash" v-if="isAdmin" @click="onDelete"></span>
     </div>
   </div>
 </template>
@@ -20,9 +20,10 @@
 <script>
 import { computed } from '@vue/runtime-core'
 import { useStore } from 'vuex';
+import AskDeleteCar from './modals/AskDeleteCar.vue';
 export default {
   props: ['car'],
-  setup(props) {
+  setup(props, ctx) {
     const title = computed(() => `${props.car.brand} ${props.car.model}`);
     const percentDiscount = computed(() => parseInt((props.car.price - props.car.discount)/props.car.price*100-100));
     const hasDiscount = computed(() => props.car.discount > 0);
@@ -33,6 +34,17 @@ export default {
     const priceNoDiscount = computed(() => props.car.price.toLocaleString());
     const isAdmin = computed(() => store.getters["user/isAdmin"]);
     
+    function onDelete() {
+      store.dispatch('modal/show', {
+        view: AskDeleteCar,
+        callback(accepted) {
+          if (accepted) {
+            ctx.emit('onDelete', props.car.id);
+          }
+        }
+      });
+    }
+
     // car.price.value = 1000;
     return {
       title,
@@ -40,7 +52,8 @@ export default {
       hasDiscount,
       price,
       priceNoDiscount,
-      isAdmin
+      isAdmin,
+      onDelete
     }
   }
 }
@@ -109,8 +122,9 @@ export default {
 
       
     }
-    .remove {
+    .delete {
       margin-left: auto;
+      cursor: pointer;
     }
   }
 

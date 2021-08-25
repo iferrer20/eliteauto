@@ -292,6 +292,22 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS DELETE_CAR;
+CREATE FUNCTION DELETE_CAR (
+    car_id integer
+)
+RETURNS void
+AS $$
+DECLARE
+    affected_rows integer;
+BEGIN
+    WITH d AS (DELETE FROM cars AS c WHERE c.id = car_id RETURNING 1) SELECT COUNT(*) INTO affected_rows FROM d;
+    IF affected_rows = 0 THEN
+        RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 
 SELECT CREATE_CAR(
     4, 

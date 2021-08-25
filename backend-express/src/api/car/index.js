@@ -22,4 +22,18 @@ routes.post("/list/", asyncHandler(async (req, res) => {
     res.json(query.rows);
 }));
 
+routes.delete("/:id/", asyncHandler(async (req, res) => {
+    
+    let id = parseInt(req.params.id);
+    if (isNaN(id) || id < 0) throw new RequestException(400, "Invalid car id");
+    
+    await pool.query("SELECT DELETE_CAR($1)", [
+        id
+    ]);
+
+    res.json({
+        status: "ok"
+    });
+}));
+
 export default routes;

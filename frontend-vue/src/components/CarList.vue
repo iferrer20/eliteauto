@@ -1,6 +1,7 @@
 
 <template>
   <div class="list">
+    <Modal />
     <CarFilter :filters="filters"/>
     <div class="cars">
       <template v-if="isAdmin">
@@ -8,9 +9,10 @@
           <i class="add icon-add"></i>
         </div>
       </template>
-      <CarElement v-for="car in state.cars" :key="car.id" :car="car"/>
+      <CarElement v-for="(car, index) in state.cars" :key="index" :car="car" @onDelete="deleteCar"/>
       <div class="hidden" v-for="index in 10" :key="index"></div>
     </div>
+    
   </div>
 </template>
 <script>
@@ -18,20 +20,23 @@ import { reactive } from '@vue/reactivity';
 import api from '../api';
 import CarFilter from './CarFilter.vue';
 import CarElement from './CarElement.vue';
+import Modal from './Modal.vue';
 import { computed, watch } from '@vue/runtime-core';
 import { useStore } from 'vuex';
 
 export default {
   components: {
     CarFilter,
-    CarElement
+    CarElement,
+    Modal
   },
   setup() {
     const state = reactive({
-      cars: []
+      cars: {},
+      modalDisplayed: true
     });
     const store = useStore();
-    const isAdmin = computed(() => store.getters["user/isAdmin"]);
+    const isAdmin = computed(() => store.getters['user/isAdmin']);
 
     let filters = reactive({
       brand: -1
@@ -39,7 +44,16 @@ export default {
 
     function getCars() {
       api.getCars(filters).then(cars => {
-        state.cars = cars;
+        state.cars = {};
+        cars.map(car => {
+          state.cars[car.id] = car;
+        });
+      });
+    }
+
+    function deleteCar(id) {
+      api.deleteCar(id).then(() => {
+        delete state.cars[id];
       });
     }
     
@@ -53,7 +67,8 @@ export default {
     return {
       state,
       filters,
-      isAdmin
+      isAdmin,
+      deleteCar
     }
   }
 }

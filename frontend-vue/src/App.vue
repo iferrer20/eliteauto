@@ -1,5 +1,6 @@
 <template>
   <NavBar></NavBar>
+  <Modal/>
   <router-view/>
 </template>
 

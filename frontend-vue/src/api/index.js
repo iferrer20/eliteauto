@@ -96,7 +96,11 @@ export default {
     //     color: "Blanco"
     //   }
     // ]
-  }
 
+
+  },
+  async deleteCar(id) {
+    return (await axios.delete(`/car/${id}/`)).data;
+  }
   
 }

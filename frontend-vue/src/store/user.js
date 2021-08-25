@@ -12,6 +12,7 @@ export const userStore = {
   },
   actions: {
     setAdmin(state) {
+      localStorage.setItem("admin", true);
       state.commit("SETADMIN");
     }
   },

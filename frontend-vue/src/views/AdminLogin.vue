@@ -36,7 +36,6 @@ export default {
       
       api.adminLogin(username.value, password.value).then(() => {
         store.dispatch("user/setAdmin");
-        localStorage.setItem("admin", true);
         router.push({name: "Cars"});
       }).catch((error) => {
         if (error.response && error.response.status == 400) {
