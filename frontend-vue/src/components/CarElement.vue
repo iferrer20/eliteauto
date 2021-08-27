@@ -1,9 +1,11 @@
 
 <template>
   <div class="car">
-    <div class="image">
-      <div v-if="hasDiscount" class="discount">{{ percentDiscount }}%</div>
-    </div>
+    <router-link :to="{name: 'Car', params: {id: car.id}}">
+      <div class="image">
+        <div v-if="hasDiscount" class="discount">{{ percentDiscount }}%</div>
+      </div>
+    </router-link>
     <div class="info">
       <div class="title">{{ title }}</div>
 
@@ -20,7 +22,6 @@
 <script>
 import { computed } from '@vue/runtime-core'
 import { useStore } from 'vuex';
-import AskDeleteCar from './modals/AskDeleteCar.vue';
 export default {
   props: ['car'],
   setup(props, ctx) {
@@ -35,14 +36,7 @@ export default {
     const isAdmin = computed(() => store.getters["user/isAdmin"]);
     
     function onDelete() {
-      store.dispatch('modal/show', {
-        view: AskDeleteCar,
-        callback(accepted) {
-          if (accepted) {
-            ctx.emit('onDelete', props.car.id);
-          }
-        }
-      });
+      ctx.emit('onDelete', props.car.id);
     }
 
     // car.price.value = 1000;

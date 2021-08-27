@@ -7,6 +7,21 @@ CREATE DATABASE eliteauto;
 GRANT ALL PRIVILEGES ON DATABASE eliteauto TO eliteauto;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO eliteauto;
 
+DROP TYPE IF EXISTS car;
+CREATE TYPE car AS (
+    brand brand,
+    model VARCHAR(64),
+    km INT,
+    price INT,
+    discount INT,
+    engine INT,
+    horsepower INT,
+    fuel fuel,
+    transmission transmission,
+    year INT,
+    color color
+);
+
 DROP TYPE IF EXISTS fuel;
 CREATE TYPE fuel AS ENUM (
     'diesel', 
@@ -82,17 +97,18 @@ CREATE TYPE color AS ENUM (
 DROP TABLE IF EXISTS cars;
 CREATE TABLE cars (
     id SERIAL PRIMARY KEY NOT NULL,
-    brand brand NOT NULL,
-    model VARCHAR(64) NOT NULL,
-    km INT NOT NULL,
-    price INT NOT NULL,
-    discount INT NOT NULL,
-    engine INT NOT NULL,
-    horsepower INT NOT NULL,
-    fuel fuel NOT NULL,
-    transmission transmission NOT NULL,
-    year INT NOT NULL,
-    color color NOT NULL
+    car car
+    -- brand brand NOT NULL,
+    -- model VARCHAR(64) NOT NULL,
+    -- km INT NOT NULL,
+    -- price INT NOT NULL,
+    -- discount INT NOT NULL,
+    -- engine INT NOT NULL,
+    -- horsepower INT NOT NULL,
+    -- fuel fuel NOT NULL,
+    -- transmission transmission NOT NULL,
+    -- year INT NOT NULL,
+    -- color color NOT NULL
 );
 
 
@@ -179,24 +195,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS GET_FUEL;
-CREATE FUNCTION GET_FUEL (
-    fuel integer
-) RETURNS fuel
-AS $$
-DECLARE
-    _fuel fuel;
-BEGIN
-    _fuel := (ENUM_RANGE(NULL::fuel))[fuel+1];
-
-    IF _fuel IS NULL THEN
-        RAISE EXCEPTION 'Invalid fuel' USING ERRCODE = '45000';
-    END IF;
-    
-    RETURN _fuel;
-END;
-$$ LANGUAGE plpgsql;
-
 DROP FUNCTION IF EXISTS GET_COLOR;
 CREATE FUNCTION GET_COLOR (
     color integer
@@ -234,61 +232,28 @@ END;
 $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS NEW_CAR;
-CREATE FUNCTION NEW_CAR (
-    brand integer, 
-    model varchar,
-    km integer,
-    price integer,
-    discount integer,
-    engine integer,
-    horsepower integer,
-    fuel integer,
-    transmission integer,
-    year integer,
-    color integer
-)
+CREATE FUNCTION NEW_CAR (car car)
 RETURNS void
 AS $$
 BEGIN
     INSERT INTO cars VALUES (
         DEFAULT,
-        GET_BRAND(brand),
-        model,
-        km,
-        price,
-        discount,
-        engine,
-        horsepower,
-        GET_FUEL(fuel),
-        GET_TRANSMISSION(transmission),
-        year,
-        GET_COLOR(color)
+        car
     );
 END; 
 $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS LIST_CARS;
 CREATE FUNCTION LIST_CARS (
-    _brand integer
+    _brand brand
 )
 RETURNS TABLE(
-    id INT,
-    brand brand,
-    model VARCHAR(64),
-    km INT,
-    price INT,
-    discount INT,
-    engine INT,
-    horsepower INT,
-    fuel fuel,
-    transmission transmission,
-    year INT,
-    color color
+    LIKE cars
 )
 AS $$
 BEGIN
     RETURN QUERY 
-        SELECT * FROM cars AS c WHERE _brand = -1 OR c.brand = GET_BRAND(_brand);
+        SELECT * FROM cars AS c WHERE _brand IS NULL OR (c.car).brand = _brand;
 END; 
 $$ LANGUAGE plpgsql;
 
@@ -309,16 +274,35 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-SELECT CREATE_CAR(
-    4, 
-    'asdasd'::VARCHAR(64),
+DROP FUNCTION IF EXISTS GET_CAR;
+CREATE FUNCTION GET_CAR (
+    car_id integer
+)
+RETURNS car
+AS $$
+DECLARE
+    car car;
+BEGIN
+    SELECT (c.car).* INTO STRICT car FROM cars AS c WHERE c.id = car_id;
+    RETURN car;
+
+EXCEPTION 
+    WHEN no_data_found THEN
+        RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT NEW_CAR((
+    GET_BRAND(0), 
+    'xd'::VARCHAR(64),
     0,
-    1000,
-    100,
+    10000,
+    0, -- discount
     0,
     0,
-    0,
-    0,
+    GET_FUEL(0),
+    GET_TRANSMISSION(0),
     2021,
-    0
-);
+    GET_COLOR(0)
+)::CAR);

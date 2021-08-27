@@ -9,7 +9,7 @@
           <i class="add icon-add"></i>
         </div>
       </template>
-      <CarElement v-for="(car, index) in state.cars" :key="index" :car="car" @onDelete="deleteCar"/>
+      <CarElement v-for="(car, index) in state.cars" :key="index" :car="car" @onDelete="onDeleteCar"/>
       <div class="hidden" v-for="index in 10" :key="index"></div>
     </div>
     
@@ -23,6 +23,7 @@ import CarElement from './CarElement.vue';
 import Modal from './Modal.vue';
 import { computed, watch } from '@vue/runtime-core';
 import { useStore } from 'vuex';
+import AskDeleteCarVue from './modals/AskDeleteCar.vue';
 
 export default {
   components: {
@@ -39,7 +40,7 @@ export default {
     const isAdmin = computed(() => store.getters['user/isAdmin']);
 
     let filters = reactive({
-      brand: -1
+      brand: "all"
     });
 
     function getCars() {
@@ -51,10 +52,17 @@ export default {
       });
     }
 
-    function deleteCar(id) {
-      api.deleteCar(id).then(() => {
-        delete state.cars[id];
-      });
+    function onDeleteCar(id) {
+      store.dispatch('modal/show', {
+        view: AskDeleteCarVue,
+        callback(accepted) {
+          if (accepted) {
+            api.admin.deleteCar(id).then(() => {
+              delete state.cars[id];
+            });
+          }
+        }
+      }); 
     }
     
     watch(filters, () => {
@@ -68,7 +76,7 @@ export default {
       state,
       filters,
       isAdmin,
-      deleteCar
+      onDeleteCar
     }
   }
 }

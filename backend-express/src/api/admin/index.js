@@ -12,12 +12,12 @@ routes.use("/", (req, res, next) => {
         next();
         return;
     }
-    console.log(req.cookies);
-    
     // Veryify token
-    checkJWT();
+    const { admin_token } = req.cookies;
+    checkJWT(admin_token);
     next();
 });
+
 routes.use("/car/", car);
 routes.post("/login/", asyncHandler(async (req, res) => {
     let { username, password } = req.body;

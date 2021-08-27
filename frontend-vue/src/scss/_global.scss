@@ -34,6 +34,9 @@ body,html {
 @mixin shadow {
   box-shadow: 0px 0px 30px -10px rgba(0,0,0,0.8);
 }
+.shadow {
+  @include shadow;
+}
 
 %shadow {
   @include shadow;
@@ -59,4 +62,19 @@ button {
 
 input {
   width: 200px;
+}
+
+.loader {
+  border: 7px solid $dark-white;
+  border-radius: 50%;
+  border-top: 7px solid #1d1d1d;
+  width: 50px;
+  height: 50px;
+  animation: spin 0.5s linear infinite;
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

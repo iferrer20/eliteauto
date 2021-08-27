@@ -34,7 +34,7 @@ export default {
 
     async function login() {
       
-      api.adminLogin(username.value, password.value).then(() => {
+      api.admin.login(username.value, password.value).then(() => {
         store.dispatch("user/setAdmin");
         router.push({name: "Cars"});
       }).catch((error) => {

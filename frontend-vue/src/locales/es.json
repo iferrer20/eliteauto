@@ -1,0 +1,17 @@
+{
+  "white": "blanco",
+  "black": "negro",
+  "gray": "gris",
+  "red": "rojo",
+  "yellow": "amarillo",
+  "blue": "azul",
+  "green": "verde",
+  "purple": "morado",
+  "orange": "naranja",
+  
+  "automatic": "automatico",
+
+  "gasoline": "gasolina",
+  "electric": "electrico"
+  
+}

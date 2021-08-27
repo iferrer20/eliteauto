@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Cars from '../views/Cars.vue'
-import AdminLogin from '../views/AdminLogin.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/Home.vue';
+import Cars from '../views/Cars.vue';
+import AdminLogin from '../views/AdminLogin.vue';
+import Car from '../views/Car.vue';
 
 const routes = [
   {
@@ -22,6 +23,12 @@ const routes = [
     path: '/admin',
     name: 'AdminLogin',
     component: AdminLogin
+  },
+
+  {
+    path: '/car/:id',
+    name: 'Car',
+    component: Car
   }
 ]
 

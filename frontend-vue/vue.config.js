@@ -9,9 +9,23 @@ module.exports = {
       }
     }
   },
+
   devServer: {
     disableHostCheck: true,
     sockPath: "/dev/sockjs-node"
   },
-  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/dev/'
+
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/dev/',
+
+  pluginOptions: {
+    i18n: {
+      locale: 'es',
+      fallbackLocale: 'es',
+      localeDir: 'locales',
+      enableLegacy: true,
+      runtimeOnly: false,
+      compositionOnly: true,
+      fullInstall: true
+    }
+  }
 };

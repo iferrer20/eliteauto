@@ -24,7 +24,7 @@ export default {
     let filters = toRef(props, 'filters');
     
     const brands = [
-      "",
+      "Todas",
       "Audi",
       "BMW",
       "Buick",
@@ -71,8 +71,9 @@ export default {
       oepend: false
     });
   
-    function onBrand(brand, i) {
-      filters.value.brand = i-1;
+    function onBrand(brand) {
+      brand = brand == "Todas" ? "all" : brand;
+      filters.value.brand = brand;
     }
     return {
       state,
