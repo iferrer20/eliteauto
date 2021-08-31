@@ -1,19 +1,17 @@
-
 <template>
   <div>
     <div>Estas seguro de que desea eliminar este coche?</div>
-    <button @click="accept">Aceptar</button>
-    <button @click="close">Cerrar</button>
+    <div class="buttons">
+      <button @click="accept">Aceptar</button>
+      <button @click="close">Cerrar</button>
+    </div>
   </div>
-  
 </template>
 
 
 <script>
 export default {
-  props: ['displayed'],
   setup(props, ctx) {
-
     return {
       close() {
         ctx.emit('close', false);
@@ -25,3 +23,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+</style>

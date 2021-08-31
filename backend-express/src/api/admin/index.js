@@ -6,19 +6,6 @@ import { checkJWT, genJWT } from '../../utils';
 
 const routes = Router();
 
-// Check if is admin (middleware)
-routes.use("/", (req, res, next) => {
-    if (req.path == "/login/") {
-        next();
-        return;
-    }
-    // Veryify token
-    const { admin_token } = req.cookies;
-    checkJWT(admin_token);
-    next();
-});
-
-routes.use("/car/", car);
 routes.post("/login/", asyncHandler(async (req, res) => {
     let { username, password } = req.body;
     if (typeof username != 'string' || username.length > 20) throw new RequestException(400, "Invalid username value");
@@ -36,5 +23,16 @@ routes.post("/login/", asyncHandler(async (req, res) => {
         status: "ok"
     });
 }));
+
+// Check if is admin (middleware)
+routes.use("/", (req, res, next) => {
+    // Veryify token
+    const { admin_token } = req.cookies;
+    checkJWT(admin_token);
+    next();
+});
+
+routes.use("/car/", car);
+
 
 export default routes;

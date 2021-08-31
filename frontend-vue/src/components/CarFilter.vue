@@ -1,84 +1,52 @@
 
 <template>
-  <div :class="['filter', {'opened': state.opened}]">
-    <Select @onOption="onBrand" :options="brands">
-    </Select>
-    <div class="open-button" @click="state.opened = !state.opened">
-      <i class="icon-chevron-right"></i>
+  <div :class="['filter', {'opened': opened}]">
+    <template v-if="loaded">
+      <Select :options="brands" placeholder="Todas" v-model="selectedBrand"/>
+      <div class="open-button" @click="opened = !opened">
+        <i class="icon-chevron-right"></i>
+      </div>
+    </template>
+    <div v-else class="loader">
+
     </div>
   </div>
-  
 </template>
 
 <script>
-import { reactive, toRef } from '@vue/reactivity';
+import { ref } from '@vue/reactivity';
 import Select from '../components/Select.vue';
+import { useStore } from 'vuex';
+import { computed, watch } from '@vue/runtime-core';
 
 export default {
   components: {
     Select
   },
-  props: ["filters"],
-  setup(props) {
+  setup() {
 
-    let filters = toRef(props, 'filters');
-    
-    const brands = [
-      "Todas",
-      "Audi",
-      "BMW",
-      "Buick",
-      "Cadillac",
-      "Chevrolet",
-      "Chrysler",
-      "Dodge",
-      "Ferrari",
-      "Ford",
-      "GM",
-      "GEM",
-      "GMC",
-      "Honda",
-      "Hummer",
-      "Hyundai",
-      "Infiniti",
-      "Isuzu",
-      "Jaguar",
-      "Jeep",
-      "Kia",
-      "Lamborghini",
-      "Lexus",
-      "Lincoln",
-      "Lotus",
-      "Mazda",
-      "Mercedes Benz",
-      "Mercury",
-      "Mitsubishi",
-      "Nissan",
-      "Oldsmobile",
-      "Peugeot",
-      "Pontiac",
-      "Porsche",
-      "Regal",
-      "Saab",
-      "Saturn",
-      "Subaru",
-      "Suzuki",
-      "Toyota",
-      "Volkswagen",
-      "Volvo"
-    ];
-    const state = reactive({
-      oepend: false
+    const store = useStore();
+
+    const opened = ref(false);
+    const selectedBrand = ref('');
+
+    const brands = computed(() => { 
+      let brands = store.getters['car/getBrands']; 
+      brands.unshift('Todas');
+      return brands;
     });
-  
-    function onBrand(brand) {
-      brand = brand == "Todas" ? "all" : brand;
-      filters.value.brand = brand;
-    }
+    
+    const loaded = computed(() => brands.value.length > 1);
+
+    watch(selectedBrand, () => {
+      store.dispatch('car/selectBrand', selectedBrand.value == 'Todas' ? 'all' : selectedBrand.value); 
+    });
+
     return {
-      state,
-      onBrand,
-      brands
+      opened,
+      brands,
+      loaded,
+      selectedBrand
     }
   }
 }
@@ -87,6 +55,9 @@ export default {
 <style lang="scss" scoped>
 
 @import '@/scss/icons';
+ .loader {
+  margin: auto;
+}
 
 .filter {
   width: 300px;
@@ -96,6 +67,8 @@ export default {
   flex-shrink: 0;
   background-color: white;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   .open-button {
     i {
@@ -147,3 +120,11 @@ export default {
   
 }
 </style>
+
+<i18n>
+{
+  "es": {
+    "all":"Todas"
+  }
+}
+</i18n>

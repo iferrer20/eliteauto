@@ -1,43 +1,47 @@
 
 
 <template>
-  <div class="select" :class="{opened: state.opened}">
-    <div class="box" @click="state.opened = !state.opened">
-      <template v-if="state.selected">
-        {{ state.selected }}
+  <div class="select" :class="{opened: opened}">
+    <div class="box" @click="opened = !opened">
+      <template v-if="!isEmpty">
+        {{ translate ? $t(modelValue) : modelValue }}
       </template>
       <template v-else>
-        Choose a brand
+        {{ translate ? $t(placeholder) : placeholder }}
+        <!-- {{ translate ? $t(default) : default }} -->
       </template>
-      <i class="icon-chevron-left"></i>
+      <i class="gg-chevron-left"></i>
     </div>
     <div class="options">
-      <div v-for="(option, index) in options" :key="option" @click="onClickOption(option, index)">
-        {{ option }}
-      </div>
+      <template v-for="(option, index) in options">
+        <div :key="option" @click="onClickOption(option, index)" v-if="option != ''">
+          {{ translate ? $t(option) : option }}
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
+import { ref } from '@vue/reactivity'
+import { computed } from '@vue/runtime-core';
 export default {
-  props: ['options'],
+  props: ['options', 'placeholder', 'translate', 'modelValue'],
   setup(props, ctx) {
-    const state = reactive({
-      opened: false,
-      selected: ""
-    });
+    const opened = ref(false);
+    const isEmpty = computed(() => !props.modelValue || props.modelValue == '');
 
     function onClickOption(option, i) {
-      state.opened = false;
-      state.selected = option;
+      opened.value = false;
+
+      ctx.emit("update:modelValue", option);
       ctx.emit("onOption", option, i);
     }
 
     return {
-      state,
-      onClickOption
+      opened,
+      onClickOption,
+      isEmpty
     }
   }
 }
@@ -52,8 +56,9 @@ export default {
   border-radius: $border-radius;
   position: relative;
   width: 100%;
-  max-width: 200px;
+  max-width: 220px;
   background-color: $white;
+  margin: 5px;
 
   .box {
     cursor: pointer;
@@ -67,7 +72,6 @@ export default {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    margin-bottom: 5px;
 
     @include shadow;
 
@@ -79,16 +83,17 @@ export default {
   }
 
   .options {
-    height: 0px;
     font-size: 17px;
     position: absolute;
-    max-height: 200px;
+    z-index: 2;
+    max-height: 0px;
     overflow: auto;
     transition: 0.3s ease-in-out;
     background-color: $white;
     border-radius: $border-radius;
     width: 100%;
     box-sizing: border-box;
+    margin-top: 5px;
     
     > div {
       border-radius: $border-radius;
@@ -109,7 +114,8 @@ export default {
 
   &.opened {
     .options {
-      height: 200px;
+      height: auto;
+      max-height: 200px;
       @include shadow;
     }
     .box {

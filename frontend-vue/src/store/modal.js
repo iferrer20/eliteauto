@@ -1,11 +1,12 @@
 import { shallowRef } from "@vue/reactivity";
 
-export const modalState = {
+export const modalStore = {
   namespaced: true,
   state: {
     opened: false,
     view: null,
-    callback: () => {}
+    events: {},
+    data: {}
   },
   mutations: {
     SETOPENED(state, value) {
@@ -14,8 +15,11 @@ export const modalState = {
     SETVIEW(state, view) {
       state.view = view;
     },
-    SETCALLBACK(state, callback) {
-      state.callback = callback;
+    SETEVENTS(state, events) {
+      state.events = events;
+    },
+    SETDATA(state, data) {
+      state.data = data;
     }
   },
   actions: {
@@ -25,17 +29,20 @@ export const modalState = {
     setView(state, view) {
       state.commit("SETVIEW", shallowRef(view));
     },
-    setCallback(state, callback) {
-      state.commit("SETCALLBACK", callback);
+    setEvents(state, events) {
+      state.commit("SETEVENTS", events);
     },
-    show(state, {view, callback}) {
+    setData(state, data) {
+      state.commit("SETDATA", data);
+    },
+    show(state, {view, events, data}) {
       state.dispatch("setOpened", true);
       state.dispatch("setView", view);
-      state.dispatch("setCallback", callback);
+      state.dispatch("setEvents", events);
+      state.dispatch("setData", data);
     },
-    close(state, payload) {
+    close(state) {
       state.dispatch("setOpened", false);
-      state.getters.getCallback(payload);
     }
   },
   getters: {
@@ -45,8 +52,11 @@ export const modalState = {
     getView(state) {
       return state.view;
     },
-    getCallback(state) {
-      return state.callback;
+    getEvents(state) {
+      return state.events;
+    },
+    getData(state) {
+      return state.data;
     }
   }
 };

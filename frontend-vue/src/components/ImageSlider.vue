@@ -1,8 +1,8 @@
 
 <template>
   <div class="slider">
-    <i @click="move(-1)" class="button-left icon-chevron-left"></i>
-    <i @click="move(1)" class="button-right icon-chevron-right"></i>
+    <i @click="move(-1)" class="button-left gg-chevron-left"></i>
+    <i @click="move(1)" class="button-right gg-chevron-right"></i>
     <div class="title">EliteAuto</div>
     <div :style="state.styling" class="imgs" ref="slider">
       <div v-for="img in state.images" :key="img"
@@ -19,13 +19,14 @@
 import { onMounted, reactive, ref } from '@vue/runtime-core';
 
 export default {
-  setup() {
+  props: ['images'],
+  setup(props) {
+
     const slider = ref(null);
     const state = reactive({
-      images: [...Array(6).keys()].map((i,c) => require(`@/assets/slider-${c+1}.jpeg`)),
+      images: [...props.images],
       styling: {}
-    });
-    
+    });    
 
     let timeout;
     let direction = -1;

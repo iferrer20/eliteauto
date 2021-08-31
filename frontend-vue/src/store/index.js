@@ -1,11 +1,13 @@
 import { createStore } from 'vuex';
-import { modalState } from './modal';
+import { modalStore } from './modal';
 import { userStore } from './user';
+import { carStore } from './car';
 
 
 export const store = createStore({
   modules: {
     user: userStore,
-    modal: modalState
+    modal: modalStore,
+    car: carStore
   }
 });

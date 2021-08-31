@@ -1,17 +1,23 @@
 {
-  "white": "blanco",
-  "black": "negro",
-  "gray": "gris",
-  "red": "rojo",
-  "yellow": "amarillo",
-  "blue": "azul",
-  "green": "verde",
-  "purple": "morado",
-  "orange": "naranja",
+  "white": "Blanco",
+  "black": "Negro",
+  "gray": "Gris",
+  "red": "Rojo",
+  "yellow": "Amarillo",
+  "blue": "Azul",
+  "green": "Verde",
+  "purple": "Morado",
+  "orange": "Naranja",
   
-  "automatic": "automatico",
+  "diesel": "Diésel",
+  "automatic": "Automático",
+  "manual": "Manual",
 
-  "gasoline": "gasolina",
-  "electric": "electrico"
+  "gasoline": "Gasolina",
+  "electric": "Eléctrico",
+
+  "fuel": "Combustible",
+  "transmission": "Caja de cambios",
+  "color": "Color"
   
 }

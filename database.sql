@@ -19,7 +19,8 @@ CREATE TYPE car AS (
     fuel fuel,
     transmission transmission,
     year INT,
-    color color
+    color color,
+    sold bool
 );
 
 DROP TYPE IF EXISTS fuel;
@@ -97,7 +98,7 @@ CREATE TYPE color AS ENUM (
 DROP TABLE IF EXISTS cars;
 CREATE TABLE cars (
     id SERIAL PRIMARY KEY NOT NULL,
-    car car
+    car car NOT NULL
     -- brand brand NOT NULL,
     -- model VARCHAR(64) NOT NULL,
     -- km INT NOT NULL,
@@ -123,7 +124,7 @@ CREATE TABLE admin_accounts (
 CREATE EXTENSION pgcrypto; -- Import pgcrypto module
 
 DROP FUNCTION IF EXISTS NEW_ADMIN;
-CREATE FUNCTION NEW_ADMIN(
+CREATE FUNCTION NEW_ADMIN (
     username varchar(16),
     password varchar(128)
 ) RETURNS void
@@ -243,6 +244,18 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS UPDATE_CAR;
+CREATE FUNCTION UPDATE_CAR (_id integer, _car car)
+RETURNS void
+AS $$
+BEGIN
+    UPDATE cars SET car = _car WHERE id = _id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 DROP FUNCTION IF EXISTS LIST_CARS;
 CREATE FUNCTION LIST_CARS (
     _brand brand
@@ -266,8 +279,8 @@ AS $$
 DECLARE
     affected_rows integer;
 BEGIN
-    WITH d AS (DELETE FROM cars AS c WHERE c.id = car_id RETURNING 1) SELECT COUNT(*) INTO affected_rows FROM d;
-    IF affected_rows = 0 THEN
+    DELETE FROM cars AS c WHERE c.id = car_id;
+    IF NOT FOUND THEN
         RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
     END IF;
 END;
@@ -293,6 +306,30 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS GET_BRANDS;
+CREATE FUNCTION GET_BRANDS ()
+RETURNS TABLE (
+    brand brand
+)
+AS $$
+BEGIN
+    RETURN QUERY 
+        SELECT (car).brand FROM cars GROUP BY brand; 
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS GET_ALLBRANDS;
+CREATE FUNCTION GET_ALLBRANDS ()
+RETURN TABLE (
+    brand brand
+)
+AS $$
+BEGIN
+    
+END;
+$$ LANGUAGE plpgsql;
+
+
 SELECT NEW_CAR((
     GET_BRAND(0), 
     'xd'::VARCHAR(64),
@@ -306,3 +343,48 @@ SELECT NEW_CAR((
     2021,
     GET_COLOR(0)
 )::CAR);
+
+SELECT NEW_CAR((
+    GET_BRAND(1), 
+    'sos'::VARCHAR(64),
+    0,
+    10000,
+    0, -- discount
+    0,
+    0,
+    GET_FUEL(0),
+    GET_TRANSMISSION(0),
+    2021,
+    GET_COLOR(0)
+)::CAR);
+
+SELECT NEW_CAR((
+    GET_BRAND(2), 
+    'lmao'::VARCHAR(64),
+    0,
+    10000,
+    0, -- discount
+    0,
+    0,
+    GET_FUEL(0),
+    GET_TRANSMISSION(0),
+    2021,
+    GET_COLOR(0)
+)::CAR);
+
+
+SELECT UPDATE_CAR(1000, (
+    GET_BRAND(2), 
+    'lmao'::VARCHAR(64),
+    0,
+    10000,
+    0, -- discount
+    0,
+    0,
+    GET_FUEL(0),
+    GET_TRANSMISSION(0),
+    2021,
+    GET_COLOR(0)
+)::CAR);
+
+

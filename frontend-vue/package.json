@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.15.2",
+    "css.gg": "^2.0.0",
     "mitt": "^3.0.0",
     "vue": "^3.0.0",
     "vue-axios": "^3.2.5",

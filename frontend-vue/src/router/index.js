@@ -24,12 +24,11 @@ const routes = [
     name: 'AdminLogin',
     component: AdminLogin
   },
-
   {
     path: '/car/:id',
     name: 'Car',
     component: Car
-  }
+  } 
 ]
 
 const router = createRouter({

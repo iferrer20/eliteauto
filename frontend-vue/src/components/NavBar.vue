@@ -41,7 +41,7 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
   padding: 15px;
   box-sizing: border-box;
   position: sticky;
-  z-index: 1;
+  z-index: 5;
   top: 0px;
   transition: background-color 0.2s ease-in-out;
 

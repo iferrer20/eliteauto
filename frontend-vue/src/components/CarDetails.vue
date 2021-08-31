@@ -1,49 +1,48 @@
 
 <template>
-  <div :class="['details', {'shadow': car}]">
-    <template v-if="car">
-      <div class="image">
-        
+  <div class="details shadow" v-if="car">
+    <div class="image">
+      
+    </div>
+    <div class="info">
+      <div>
+        <span>Marca</span>
+        <span>{{ car.brand }}</span>
       </div>
-      <div class="info">
-        <div>
-          <span>Marca</span>
-          <span>{{ car.brand }}</span>
-        </div>
-        <div>
-          <span>Modelo</span>
-          <span>{{ car.model }}</span>
-        </div>
-        <div>
-          <span>Kilometros</span>
-          <span>{{ car.km }}</span>
-        </div>
-        <div>
-          <span>Precio</span>
-          <span>{{ car.price-car.discount }}</span>
-        </div>
-        <div>
-          <span>Potencia (cv)</span>
-          <span>{{ car.horsepower }}</span>
-        </div>
-        <div>
-          <span>Caja de cambios</span>
-          <span>{{ $t(car.transmission) }}</span>
-        </div>
-        <div>
-          <span>Motor</span>
-          <span>{{ car.engine }}</span>
-        </div>
-        <div>
-          <span>Color</span>
-          <span>{{ $t(car.color) }}</span>
-        </div>
+      <div>
+        <span>Modelo</span>
+        <span>{{ car.model }}</span>
       </div>
-    </template>
-    <div v-else class="loader">
-
+      <div>
+        <span>Kilometros</span>
+        <span>{{ car.km }}</span>
+      </div>
+      <div>
+        <span>Precio</span>
+        <span>{{ car.price-car.discount }}</span>
+      </div>
+      <div>
+        <span>Potencia (cv)</span>
+        <span>{{ car.horsepower }}</span>
+      </div>
+      <div>
+        <span>Caja de cambios</span>
+        <span>{{ $t(car.transmission) }}</span>
+      </div>
+      <div>
+        <span>Motor</span>
+        <span>{{ car.engine }}</span>
+      </div>
+      <div>
+        <span>Color</span>
+        <span>{{ $t(car.color) }}</span>
+      </div>
     </div>
   </div>
+  <div v-else class="loader">
+
+  </div>
+
 </template>
 
 <script>
@@ -68,18 +67,38 @@ export default {
   justify-content: center;
   border-radius: $border-radius;
   background-color: $white;
+  margin: 20px;
 
   .loader {
-    
+    align-self: center;
   }
 
   .image {
     background-color: black;
-    border-radius: 5px 0px 0px 5px;
+    border-radius: $border-radius 0px 0px $border-radius;
   }
+
+  .info {
+    div:not(:last-child) {
+      border-bottom: 1px solid rgb(173, 173, 173);
+    }
+  }
+
   .image, .info {
     flex: 50%;
     
+  }
+  @include small {
+    flex-direction: column;
+
+    .image {
+      flex: unset;
+      height: 200px;
+      border-radius: 5px 5px 0px 0px;
+    }
+    .info {
+      flex: unset;
+    }
   }
   .info {
     display: flex;

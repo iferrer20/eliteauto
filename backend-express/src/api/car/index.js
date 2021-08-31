@@ -8,7 +8,7 @@ const routes = Router();
 routes.post("/list/", asyncHandler(async (req, res) => {
     let brand = req.body.brand;
     brand = brand == 'all' ? null : brand;
-    console.log(brand);
+
     let query = await pool.query("SELECT id, (car).* FROM LIST_CARS($1)", [
         brand
     ]);
@@ -19,6 +19,28 @@ routes.post("/list/", asyncHandler(async (req, res) => {
 routes.get("/list/", asyncHandler(async (req, res) => {
     let query = await pool.query("SELECT id, (car).* FROM LIST_CARS(NULL)");
     res.json(query.rows);
+}));
+
+routes.get("/brands/", asyncHandler(async (req, res) => {
+    let brands = [];
+    let rows = (await pool.query("SELECT * FROM GET_BRANDS()")).rows;
+
+    rows.forEach(element => {
+        brands.push(element["brand"]); 
+    });
+
+    res.json(brands);
+}));
+
+routes.get("/allbrands/", asyncHandler(async (req, res) => {
+    let brands = [];
+    let rows = (await pool.query("SELECT UNNEST(ENUM_RANGE(NULL::brand)) AS brand")).rows;
+
+    rows.forEach(element => {
+        brands.push(element["brand"]);
+    })
+
+    res.json(brands);
 }));
 
 routes.get("/:id/", asyncHandler(async (req, res) => {
@@ -32,6 +54,8 @@ routes.get("/:id/", asyncHandler(async (req, res) => {
 
     res.json(query.rows[0]);
 }));
+
+
 
 
 export default routes;

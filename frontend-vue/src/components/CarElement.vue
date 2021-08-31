@@ -14,7 +14,10 @@
         <span class="discount" v-if="car.discount">{{ priceNoDiscount }}€</span>
         
       </div>
-      <span class="delete icon-trash" v-if="isAdmin" @click="onDelete"></span>
+      <div class="actions" v-if="isAdmin">
+        <span @click="onEdit"><i class="gg-pen"></i></span>
+        <span @click="onDelete"><i class="delete gg-trash"></i></span>
+      </div>
     </div>
   </div>
 </template>
@@ -36,7 +39,11 @@ export default {
     const isAdmin = computed(() => store.getters["user/isAdmin"]);
     
     function onDelete() {
-      ctx.emit('onDelete', props.car.id);
+      ctx.emit('onDelete', props.car);
+    }
+
+    function onEdit() {
+      ctx.emit('onEdit', props.car);
     }
 
     // car.price.value = 1000;
@@ -47,7 +54,8 @@ export default {
       price,
       priceNoDiscount,
       isAdmin,
-      onDelete
+      onDelete,
+      onEdit
     }
   }
 }
@@ -63,6 +71,7 @@ export default {
   width: 300px;
   max-width: 400px;
   margin: 10px;
+  height: fit-content;
   border-radius: $border-radius;
   flex-grow: 1;
   position: relative;
@@ -116,9 +125,16 @@ export default {
 
       
     }
-    .delete {
-      margin-left: auto;
+    .actions > span {
       cursor: pointer;
+      margin-left: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .actions {
+      margin-left: auto;
+      display: flex;
     }
   }
 
