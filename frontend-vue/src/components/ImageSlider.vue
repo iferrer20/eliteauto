@@ -1,12 +1,12 @@
 
 <template>
   <div class="slider">
-    <i @click="move(-1)" class="button-left gg-chevron-left"></i>
-    <i @click="move(1)" class="button-right gg-chevron-right"></i>
-    <div class="title">EliteAuto</div>
+    <i @click="move(-1)" class="button-left gg-chevron-left" v-if="!oneImage"></i>
+    <i @click="move(1)" class="button-right gg-chevron-right" v-if="!oneImage"></i>
+    <!-- <div class="title">EliteAuto</div> -->
     <div :style="state.styling" class="imgs" ref="slider">
-      <div v-for="img in state.images" :key="img"
-        :style="'background-image: url(' + img + ')'"
+      <div v-for="img in state.images" :key="img.key"
+        :style="'background-image: url(' + img.data + ')'"
         alt="">
         
       </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref } from '@vue/runtime-core';
+import { computed, onMounted, reactive, ref } from '@vue/runtime-core';
 
 export default {
   props: ['images'],
@@ -24,49 +24,73 @@ export default {
 
     const slider = ref(null);
     const state = reactive({
-      images: [...props.images],
+      images: [
+        {data: props.images[props.images.length-1], key: 0 }, 
+        ...props.images.map((i, c) => ({data: i, key: c+1})),
+        {data: props.images[0], key: props.images.length }
+      ],
       styling: {}
-    });    
+    });
+
+    state.styling.transition = 'transform .4s ease-in-out';
+
+    const oneImage = computed(() => state.images.length == 1);
 
     let timeout;
-    let direction = -1;
+    let moving = false;
+    let p = 1;
 
     function timeoutMove() {
       timeout = setTimeout(move, 5000);
     }
 
     function move(d=1) {
+      if (moving) {
+        return;
+      }
       clearTimeout(timeout);
-
-      state.styling.transition = '0.5s transform ease-in-out';
-      state.styling.transform = `translateX(-${(d+1)/state.images.length*100}%)`;
-      direction = d;
+      p+=d;
+      state.styling.transition = 'transform .4s ease-in-out';
+      state.styling.transform = `translateX(${(p)/state.images.length*100*-1}%)`;
+      moving = true;
+      
+      //
+      //
 
       timeoutMove();
     }
     function transitionEnd() {
-      if (direction == 1) {
-        state.images.push(state.images[0]);
-        state.images.shift();
-      } else if (direction == -1) {
-        state.images.unshift(state.images[state.images.length-1]);
-        state.images.pop();
+      if (p == 0) {
+        p = state.images.length-2;
+        
+      } else if (p == state.images.length-1) {
+        p = 1;
       }
       delete state.styling.transition;
-      state.styling.transform = `translateX(-${1/state.images.length*100}%)`;
+      state.styling.transform = `translateX(${(p)/state.images.length*100*-1}%)`;
+      moving = false;
+      
+      
+      //delete state.styling.transition;
+      //state.styling.transform = `translateX(-${1/state.images.length*100}%)`;
     }
     
     onMounted(() => {
-      slider.value.addEventListener('transitionend', transitionEnd);
-      state.styling.width = `${state.images.length*100}%`;
-      transitionEnd();
-      timeoutMove();
+      if (!oneImage.value) {
+        slider.value.addEventListener('transitionend', transitionEnd);
+        state.styling.transform = `translateX(${(p)/state.images.length*100*-1}%)`;
+        state.styling.width = `${state.images.length*100}%`;
+        
+        timeoutMove();
+        //timeoutMove();
+      } 
     });
 
     return {
       move,
       state,
-      slider
+      slider,
+      oneImage
     }
     
   }
@@ -75,10 +99,8 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '@/scss/icons';
-
 .slider {
-  height: 100vh;
+  height: 100%;
   position: relative;
   overflow-x: hidden;
 
@@ -93,7 +115,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center 60%;
       background-size: cover;
-      filter: brightness(50%);
+      //filter: brightness(50%);
     }
   }
 

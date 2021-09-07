@@ -23,6 +23,7 @@ export default {
     setTimeout(() => {
       api.getCar(id).then((c) => {
         car.value = c;
+        car.value.id = id;
       });
     }, 500);
     

@@ -1,5 +1,7 @@
 <template>
-  <ImageSlider :images="[...Array(6).keys()].map((i,c) => require(`@/assets/slider-${c+1}.jpeg`))"></ImageSlider>
+  <div class="home">
+    <ImageSlider :images="[...Array(6).keys()].map((i,c) => `/img/slider-${c+1}.jpeg`)"></ImageSlider>
+  </div>
 </template>
 
 <script>
@@ -12,3 +14,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+.home {
+  height: 100vh;
+}
+
+</style>

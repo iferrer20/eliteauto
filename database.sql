@@ -20,7 +20,8 @@ CREATE TYPE car AS (
     transmission transmission,
     year INT,
     color color,
-    sold bool
+    sold bool,
+    nimgs INT
 );
 
 DROP TYPE IF EXISTS fuel;
@@ -234,13 +235,16 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS NEW_CAR;
 CREATE FUNCTION NEW_CAR (car car)
-RETURNS void
+RETURNS integer
 AS $$
+DECLARE
+    _id INT;
 BEGIN
     INSERT INTO cars VALUES (
         DEFAULT,
         car
-    );
+    ) RETURNING id INTO _id;
+    RETURN _id;
 END; 
 $$ LANGUAGE plpgsql;
 
@@ -328,63 +332,5 @@ BEGIN
     
 END;
 $$ LANGUAGE plpgsql;
-
-
-SELECT NEW_CAR((
-    GET_BRAND(0), 
-    'xd'::VARCHAR(64),
-    0,
-    10000,
-    0, -- discount
-    0,
-    0,
-    GET_FUEL(0),
-    GET_TRANSMISSION(0),
-    2021,
-    GET_COLOR(0)
-)::CAR);
-
-SELECT NEW_CAR((
-    GET_BRAND(1), 
-    'sos'::VARCHAR(64),
-    0,
-    10000,
-    0, -- discount
-    0,
-    0,
-    GET_FUEL(0),
-    GET_TRANSMISSION(0),
-    2021,
-    GET_COLOR(0)
-)::CAR);
-
-SELECT NEW_CAR((
-    GET_BRAND(2), 
-    'lmao'::VARCHAR(64),
-    0,
-    10000,
-    0, -- discount
-    0,
-    0,
-    GET_FUEL(0),
-    GET_TRANSMISSION(0),
-    2021,
-    GET_COLOR(0)
-)::CAR);
-
-
-SELECT UPDATE_CAR(1000, (
-    GET_BRAND(2), 
-    'lmao'::VARCHAR(64),
-    0,
-    10000,
-    0, -- discount
-    0,
-    0,
-    GET_FUEL(0),
-    GET_TRANSMISSION(0),
-    2021,
-    GET_COLOR(0)
-)::CAR);
 
 

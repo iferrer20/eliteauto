@@ -1,7 +1,7 @@
 
 <template>
   <div :class="['navbar', {'opacity': route.name == 'Home'}]">
-    <router-link :to="{ name: 'Home'}" class="logo"><img src="../assets/logo.png"></router-link>
+    <router-link :to="{ name: 'Home'}" class="logo"><img src="/img/logo.png"></router-link>
     <div class="navbar-menu">
       <router-link :to="{ name: 'Cars' }">
         <div :class="{'selected': route.name == 'Cars'}">Coches</div>

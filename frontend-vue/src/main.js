@@ -6,7 +6,7 @@ import router from './router';
 import { store } from './store';
 import i18n from './i18n';
 
-axios.defaults.baseURL = "http://localhost/api/";
+axios.defaults.baseURL = window.location.origin + "/api/";
 
 createApp(App)
 .use(i18n)

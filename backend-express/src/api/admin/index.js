@@ -19,9 +19,7 @@ routes.post("/login/", asyncHandler(async (req, res) => {
     let token = genJWT({username: username});
     res.cookie("admin_token", token);
     
-    res.json({
-        status: "ok"
-    });
+    res.end();
 }));
 
 // Check if is admin (middleware)

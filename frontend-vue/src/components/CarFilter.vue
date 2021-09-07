@@ -2,7 +2,10 @@
 <template>
   <div :class="['filter', {'opened': opened}]">
     <template v-if="loaded">
+      <b>Marca</b>
       <Select :options="brands" placeholder="Todas" v-model="selectedBrand"/>
+      <b>Precio</b>
+      <RangeSelector />
       <div class="open-button" @click="opened = !opened">
         <i class="icon-chevron-right"></i>
       </div>
@@ -15,13 +18,15 @@
 
 <script>
 import { ref } from '@vue/reactivity';
-import Select from '../components/Select.vue';
+import Select from './Select.vue';
+import RangeSelector from './RangeSelector.vue';
 import { useStore } from 'vuex';
 import { computed, watch } from '@vue/runtime-core';
 
 export default {
   components: {
-    Select
+    Select,
+    RangeSelector
   },
   setup() {
 
@@ -54,7 +59,6 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '@/scss/icons';
  .loader {
   margin: auto;
 }
@@ -69,6 +73,13 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
+
+  b {
+    align-self: flex-start;
+    margin-left: 30px;
+    margin: 20px;
+  }
 
   .open-button {
     i {

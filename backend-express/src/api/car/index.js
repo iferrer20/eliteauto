@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { RequestException, asyncHandler } from '../../exception';
 import pool from '../../db-pool';
 
-
 const routes = Router();
 
 routes.post("/list/", asyncHandler(async (req, res) => {
@@ -38,7 +37,7 @@ routes.get("/allbrands/", asyncHandler(async (req, res) => {
 
     rows.forEach(element => {
         brands.push(element["brand"]);
-    })
+    });
 
     res.json(brands);
 }));

@@ -142,8 +142,6 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '@/scss/icons';
-
 .list {
   display: flex;
   position: relative;

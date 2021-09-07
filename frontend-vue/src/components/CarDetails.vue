@@ -1,9 +1,10 @@
 
 <template>
   <div class="details shadow" v-if="car">
-    <div class="image">
+    <ImageSlider :images="[...Array(car.nimgs).keys()].map((i,c) => `/img/car/${car.id}/${c+1}.jpg`)" class="image">
       
-    </div>
+    </ImageSlider>
+    
     <div class="info">
       <div>
         <span>Marca</span>
@@ -46,8 +47,11 @@
 </template>
 
 <script>
-
+import ImageSlider from './ImageSlider.vue';
 export default {
+  components: {
+    ImageSlider
+  },
   props: ['car'],
   setup() {
 
@@ -63,8 +67,9 @@ export default {
 
 .details {
   display: flex;
-  width: 800px;
+  width: 1000px;
   justify-content: center;
+  align-items: center;
   border-radius: $border-radius;
   background-color: $white;
   margin: 20px;
@@ -76,6 +81,7 @@ export default {
   .image {
     background-color: black;
     border-radius: $border-radius 0px 0px $border-radius;
+    height: 500px;
   }
 
   .info {

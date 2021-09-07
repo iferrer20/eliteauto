@@ -4,7 +4,6 @@ module.exports = {
       sass: {
         additionalData: `
         @import "@/scss/_global.scss";
-        @import "@/scss/_global.scss";
         `
       }
     }

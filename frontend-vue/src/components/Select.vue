@@ -49,8 +49,6 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '@/scss/icons';
-
 .select {
   user-select: none;
   border-radius: $border-radius;

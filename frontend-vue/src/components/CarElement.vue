@@ -1,8 +1,9 @@
 
 <template>
-  <div class="car">
-    <router-link :to="{name: 'Car', params: {id: car.id}}">
-      <div class="image">
+  <div class="car" v-once> <!-- render one time -->
+    <router-link :to="{name: 'Car', params: {id: car.id}}" :class="{ disabled:  car.sold }">
+      <div :class="['image', {sold: car.sold}]" :style="`background-image: url(/img/car/${car.id}/1.jpg)`">
+        <div v-if="car.sold" class="sold">VENDIDO</div>
         <div v-if="hasDiscount" class="discount">{{ percentDiscount }}%</div>
       </div>
     </router-link>
@@ -63,8 +64,6 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '@/scss/icons';
-
 .car {
   background-color: $white;
   min-width: 250px;
@@ -77,14 +76,47 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  a.disabled {
+    pointer-events: none;
+  }
 
   .image {
     height: 200px;
     background-color: black;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
     border-top-right-radius: $border-radius;
     border-top-left-radius: $border-radius;
+    position: relative;
+    overflow: hidden;
+
+    
+
+    &::after {
+      content: "";
+      background: inherit;
+      position: absolute;
+      background-size: cover;
+      transform-origin: center;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transition: transform .3s ease-in-out;
+    }
+    &.sold::after {
+      filter: brightness(0.5);
+    }
+
+    &:not(.sold):hover {
+      &::after {
+        transform: scale(1.1);
+      }
+    }
 
     .discount {
+      z-index: 2;
       position: absolute;
       top: 20px;
       left: 20px;
@@ -96,6 +128,24 @@ export default {
       font-weight: bold;
       padding: 5px;
       color: white;
+    }
+
+    .sold {
+      color: red;
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 25pt;
+      font-weight: bold;
+      border: 5px solid red;
+      border-radius: $border-radius;
+      padding: 10px;
+      width: 50%;
+      text-align: center;
+      user-select: none;
+      
     }
 
   }
