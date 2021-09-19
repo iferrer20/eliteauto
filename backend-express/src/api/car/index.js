@@ -8,8 +8,16 @@ routes.post("/list/", asyncHandler(async (req, res) => {
     let brand = req.body.brand;
     brand = brand == 'all' ? null : brand;
 
-    let query = await pool.query("SELECT id, (car).* FROM LIST_CARS($1)", [
-        brand
+    let { minPrice } = req.body;
+    minPrice = minPrice ? minPrice : 0;
+    
+    let { maxPrice } = req.body;
+    maxPrice = maxPrice ? maxPrice : 20000;
+
+    let query = await pool.query("SELECT id, (car).* FROM LIST_CARS($1, $2, $3)", [
+        brand,
+        minPrice,
+        maxPrice
     ]);
 
     res.json(query.rows);

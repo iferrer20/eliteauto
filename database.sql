@@ -100,17 +100,6 @@ DROP TABLE IF EXISTS cars;
 CREATE TABLE cars (
     id SERIAL PRIMARY KEY NOT NULL,
     car car NOT NULL
-    -- brand brand NOT NULL,
-    -- model VARCHAR(64) NOT NULL,
-    -- km INT NOT NULL,
-    -- price INT NOT NULL,
-    -- discount INT NOT NULL,
-    -- engine INT NOT NULL,
-    -- horsepower INT NOT NULL,
-    -- fuel fuel NOT NULL,
-    -- transmission transmission NOT NULL,
-    -- year INT NOT NULL,
-    -- color color NOT NULL
 );
 
 
@@ -262,7 +251,9 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS LIST_CARS;
 CREATE FUNCTION LIST_CARS (
-    _brand brand
+    _brand brand,
+    min_price integer,
+    max_price integer
 )
 RETURNS TABLE(
     LIKE cars
@@ -270,7 +261,7 @@ RETURNS TABLE(
 AS $$
 BEGIN
     RETURN QUERY 
-        SELECT * FROM cars AS c WHERE _brand IS NULL OR (c.car).brand = _brand;
+        SELECT * FROM cars AS c WHERE (_brand IS NULL OR (c.car).brand = _brand) AND (c.car).price-(c.car).discount BETWEEN min_price AND max_price;
 END; 
 $$ LANGUAGE plpgsql;
 

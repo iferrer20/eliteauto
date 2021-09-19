@@ -3,9 +3,13 @@
   <div :class="['filter', {'opened': opened}]">
     <template v-if="loaded">
       <b>Marca</b>
-      <Select :options="brands" placeholder="Todas" v-model="selectedBrand"/>
+      <Select :options="brands" placeholder="Todas" v-model="selectedBrand" />
       <b>Precio</b>
-      <RangeSelector />
+      <RangeSelector :min="0" :max="20000" v-model:radio1="minPrice" v-model:radio2="maxPrice" @onapply="onApplyPrice"/>
+      <div class="prices">
+        <span>{{ minPrice }}</span>
+        <span>{{ maxPrice }}</span>
+      </div>
       <div class="open-button" @click="opened = !opened">
         <i class="icon-chevron-right"></i>
       </div>
@@ -34,6 +38,8 @@ export default {
 
     const opened = ref(false);
     const selectedBrand = ref('');
+    const minPrice = ref(0);
+    const maxPrice = ref(20000);
 
     const brands = computed(() => { 
       let brands = store.getters['car/getBrands']; 
@@ -47,11 +53,18 @@ export default {
       store.dispatch('car/selectBrand', selectedBrand.value == 'Todas' ? 'all' : selectedBrand.value); 
     });
 
+    function onApplyPrice() {
+      store.dispatch('car/setPriceRange', {minPrice: minPrice.value, maxPrice: maxPrice.value});
+    }
+
     return {
       opened,
       brands,
       loaded,
-      selectedBrand
+      selectedBrand,
+      minPrice,
+      maxPrice,
+      onApplyPrice
     }
   }
 }
@@ -59,7 +72,7 @@ export default {
 
 <style lang="scss" scoped>
 
- .loader {
+.loader {
   margin: auto;
 }
 
@@ -74,6 +87,16 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .prices {
+    font-weight: bold;
+    width: 220px;
+    margin: 20px;
+    span:nth-child(2) {
+      float: right;
+    }
+    user-select: none;
+  }
 
   b {
     align-self: flex-start;

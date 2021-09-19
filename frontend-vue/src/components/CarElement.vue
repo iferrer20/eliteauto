@@ -91,8 +91,6 @@ export default {
     position: relative;
     overflow: hidden;
 
-    
-
     &::after {
       content: "";
       background: inherit;
