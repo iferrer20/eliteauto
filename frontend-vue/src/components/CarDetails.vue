@@ -67,12 +67,11 @@ export default {
 
 .details {
   display: flex;
-  width: 1000px;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   border-radius: $border-radius;
   background-color: $white;
-  margin: 20px;
+  max-width: 700px;
+  width: 100%;
 
   .loader {
     align-self: center;
@@ -81,7 +80,10 @@ export default {
   .image {
     background-color: black;
     border-radius: $border-radius 0px 0px $border-radius;
-    height: 500px;
+
+    width: 100%;
+    height: 350px;
+    border-radius: 5px 5px 0px 0px;
   }
 
   .info {
@@ -90,17 +92,13 @@ export default {
     }
   }
 
-  .image, .info {
-    flex: 50%;
-    
-  }
   @include small {
     flex-direction: column;
 
     .image {
       flex: unset;
       height: 200px;
-      border-radius: 5px 5px 0px 0px;
+
     }
     .info {
       flex: unset;

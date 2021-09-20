@@ -53,5 +53,8 @@ export default {
   },
   async getAllBrands() {
     return (await axios.get('/car/allbrands/')).data;
+  },
+  async sendMessage(data) {
+    return (await axios.post('/message/', data)).data;
   }
 }

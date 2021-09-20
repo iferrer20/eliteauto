@@ -1,16 +1,18 @@
 <template>
   <div class="range" ref="range">
     <div class="range-selected"></div>
-    <div class="radio left" @mousemove="onDrag" @mousedown="onClick" @mouseup="onClickEnd" @mouseleave="onClickEnd">
+    <div class="radio left">
       <i class="gg-chevron-right"></i>
     </div>
-    <div class="radio right" @mousemove="onDrag" @mousedown="onClick" @mouseup="onClickEnd" @mouseleave="onClickEnd">
+    <!-- @mousemove="onDrag" @mousedown="onClick" @mouseup="onClickEnd" @mouseleave="onClickEnd" -->
+    <div class="radio right">
       <i class="gg-chevron-left"></i>
     </div>
   </div>
 </template>
 
 <script>
+import { onMounted, onUnmounted, ref } from '@vue/runtime-core';
 
 export default {
   props: ['min', 'max'],
@@ -18,9 +20,27 @@ export default {
     let dragging = false;
     let radiosPos = [];
     let selectedRadio = 0;
+    const range = ref(null);
+
+    onMounted(() => {
+      [...range.value.children].filter(r => r.classList.contains('radio')).forEach(r => {
+        r.ondrag = onDrag;
+        r.onmousedown = onDragStart;
+        r.onmousemove = onDrag;
+        document.body.addEventListener('mouseup', onDragEnd);
+        r.ondragstart = onDragStart;
+        r.ondragend = onDragEnd;
+        r.ontouchstart = onDragStart;
+        r.ontouchmove = onDrag;
+        r.ontouchend = onDragEnd;
+      });
+    });
+    onUnmounted(() => {
+      document.body.removeEventListener('mouseup', onDragEnd);
+    })
 
     function getRelativePos(event) {
-      return event.clientX - event.target.parentElement.offsetLeft;
+      return (event.touches ? event.touches[0].clientX : event.clientX) - event.target.parentElement.offsetLeft;
     }
 
     function getTransform(element) {
@@ -28,8 +48,15 @@ export default {
       transformPos = transformPos ? parseInt(transformPos[0]) : 0;
       return transformPos;
     }
+    function onDragStart(event) {
+      radiosPos = [...event.target.parentNode.children].filter(r => r != event.target && r.classList.contains('radio')).map(r => r.offsetLeft +15 + getTransform(r));
+      selectedRadio = [...event.target.parentNode.children].filter(r => r.classList.contains('radio')).indexOf(event.target)+1;
+      dragging = true;
+      onDrag(event);
+    }
 
     function onDrag(event) {
+      
       if (dragging) {
         let transformPos = getTransform(event.target);
 
@@ -43,7 +70,7 @@ export default {
             }
           });
           if (move) {
-            transformPos += (event.offsetX - 15);
+            transformPos = relativePos;
             event.target.style.transform = `translateX(${transformPos}px)`;
             ctx.emit('update:radio' + selectedRadio, parseInt(relativePos/200*props.max));
 
@@ -52,29 +79,21 @@ export default {
               rangeSelected.style.transform = `translateX(${transformPos}px)`;
               rangeSelected.style.width = `${radiosPos[0]-transformPos}px`;
             } else if (selectedRadio == 2) {
-              rangeSelected.style.width = `${200+transformPos-radiosPos[0]}px`;
+              rangeSelected.style.width = `${transformPos-radiosPos[0]}px`;
             }
           }
         }
       }
     }
 
-    function onClick(event) {
-      radiosPos = [...event.target.parentNode.children].filter(r => r != event.target && r.classList.contains('radio')).map(r => r.offsetLeft +15 + getTransform(r));
-      dragging = true;
-      selectedRadio = [...event.target.parentNode.children].filter(r => r.classList.contains('radio')).indexOf(event.target)+1;
-      onDrag(event);
-    }
 
-    function onClickEnd() {
+    function onDragEnd() {
       dragging = false;
       ctx.emit('onapply');
     }
 
     return {
-      onDrag,
-      onClick,
-      onClickEnd
+      range
     }
   }
 }
@@ -116,9 +135,7 @@ export default {
     }
 
     &.right {
-      left: unset;
-      right: -15px;
-      top: -15px;
+      transform: translateX(200px);
     }
     
   }

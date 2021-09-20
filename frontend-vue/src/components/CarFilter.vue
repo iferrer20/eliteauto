@@ -11,7 +11,7 @@
         <span>{{ maxPrice }}</span>
       </div>
       <div class="open-button" @click="opened = !opened">
-        <i class="icon-chevron-right"></i>
+        <i class="gg-chevron-right"></i>
       </div>
     </template>
     <div v-else class="loader">

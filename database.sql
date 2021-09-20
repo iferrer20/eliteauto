@@ -109,6 +109,14 @@ CREATE TABLE admin_accounts (
     hash CHAR(70) NOT NULL
 );
 
+DROP TABLE IF EXISTS contact_messages;
+CREATE TABLE contact_messages (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(16),
+    surname VARCHAR(32),
+    message VARCHAR(1024)
+);
+
 -- Procedures
 
 CREATE EXTENSION pgcrypto; -- Import pgcrypto module
@@ -311,7 +319,7 @@ BEGIN
     RETURN QUERY 
         SELECT (car).brand FROM cars GROUP BY brand; 
 END;
-$$ LANGUAGE plpgsql;
+$$ language plpgsql;
 
 DROP FUNCTION IF EXISTS GET_ALLBRANDS;
 CREATE FUNCTION GET_ALLBRANDS ()
@@ -325,3 +333,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS NEW_MESSAGE;
+CREATE FUNCTION NEW_MESSAGE(name varchar(32), surname varchar(32), email varchar(32))
+RETURNS void
+AS $$
+BEGIN
+    INSERT INTO contact_messages VALUES (name, surname, email);
+END;
+$$ language plpgsql;

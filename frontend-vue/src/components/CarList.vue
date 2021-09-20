@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <Modal />
+
     <CarFilter />
     <div class="list-cars">
       <template v-if="isAdmin">
@@ -29,7 +29,6 @@ import { ref } from '@vue/reactivity';
 import api from '../api';
 import CarFilter from './CarFilter.vue';
 import CarElement from './CarElement.vue';
-import Modal from './Modal.vue';
 import { computed, watch } from '@vue/runtime-core';
 import { useStore } from 'vuex';
 import AskDeleteCarVue from './modals/AskDeleteCar.vue';
@@ -38,8 +37,7 @@ import CarEditor from './modals/CarEditor.vue';
 export default {
   components: {
     CarFilter,
-    CarElement,
-    Modal
+    CarElement
   },
   setup() {
 

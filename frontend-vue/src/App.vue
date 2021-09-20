@@ -6,11 +6,13 @@
 
 <script>
 
-import NavBar from '@/components/NavBar.vue'
+import NavBar from '@/components/NavBar.vue';
+import Modal from '@/components/Modal.vue';
 
 export default {
   components: {
-    NavBar
+    NavBar,
+    Modal
   }
 }
 
@@ -21,7 +23,7 @@ export default {
 @import "@/scss/fonts";
 @import '@/scss/icons';
 
-input, button {
+input, button, textarea {
   background-color: $white;
   border: none;
   outline: none;
@@ -29,6 +31,9 @@ input, button {
   padding: 10px;
   font-size: 13pt;
   border-radius: $border-radius;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  resize: none;
+  box-sizing: border-box;
   @include shadow;
 }
 

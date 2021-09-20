@@ -2,6 +2,7 @@
 <template>
   <div class="car">
     <CarDetails :car="car"></CarDetails>
+    <ContactForm :car="car"></ContactForm>
   </div>
 </template>
 
@@ -10,9 +11,12 @@ import { ref } from '@vue/reactivity';
 import { useRoute } from 'vue-router';
 import api from '../api';
 import CarDetails from '../components/CarDetails.vue';
+import ContactForm from '../components/ContactForm.vue';
+
 export default {
   components: {
-    CarDetails
+    CarDetails,
+    ContactForm
   },
   props: ['id'],
   setup() {
@@ -43,7 +47,9 @@ export default {
   height: calc(100vh - #{$navbar-height});
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 </style>
