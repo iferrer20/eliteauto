@@ -20,16 +20,17 @@ export default {
     let dragging = false;
     let radiosPos = [];
     let selectedRadio = 0;
+    let selectedRadioEl;
     const range = ref(null);
 
     onMounted(() => {
       [...range.value.children].filter(r => r.classList.contains('radio')).forEach(r => {
-        r.ondrag = onDrag;
+        //r.ondrag = onDrag;
         r.onmousedown = onDragStart;
-        r.onmousemove = onDrag;
+        document.body.addEventListener('mousemove', onDrag);
         document.body.addEventListener('mouseup', onDragEnd);
-        r.ondragstart = onDragStart;
-        r.ondragend = onDragEnd;
+        //r.ondragstart = onDragStart;
+        //r.ondragend = onDragEnd;
         r.ontouchstart = onDragStart;
         r.ontouchmove = onDrag;
         r.ontouchend = onDragEnd;
@@ -37,10 +38,11 @@ export default {
     });
     onUnmounted(() => {
       document.body.removeEventListener('mouseup', onDragEnd);
+      document.body.removeEventListener('mousemove', onDrag);
     })
 
     function getRelativePos(event) {
-      return (event.touches ? event.touches[0].clientX : event.clientX) - event.target.parentElement.offsetLeft;
+      return (event.touches ? event.touches[0].clientX : event.clientX) - selectedRadioEl.parentElement.offsetLeft;
     }
 
     function getTransform(element) {
@@ -51,6 +53,7 @@ export default {
     function onDragStart(event) {
       radiosPos = [...event.target.parentNode.children].filter(r => r != event.target && r.classList.contains('radio')).map(r => r.offsetLeft +15 + getTransform(r));
       selectedRadio = [...event.target.parentNode.children].filter(r => r.classList.contains('radio')).indexOf(event.target)+1;
+      selectedRadioEl = event.target;
       dragging = true;
       onDrag(event);
     }
@@ -58,7 +61,7 @@ export default {
     function onDrag(event) {
       
       if (dragging) {
-        let transformPos = getTransform(event.target);
+        let transformPos = getTransform(selectedRadioEl);
 
         // Collisions
         let relativePos = getRelativePos(event);
@@ -71,10 +74,10 @@ export default {
           });
           if (move) {
             transformPos = relativePos;
-            event.target.style.transform = `translateX(${transformPos}px)`;
+            selectedRadioEl.style.transform = `translateX(${transformPos}px)`;
             ctx.emit('update:radio' + selectedRadio, parseInt(relativePos/200*props.max));
 
-            let rangeSelected = event.target.parentNode.children[0];
+            let rangeSelected = selectedRadioEl.parentNode.children[0];
             if (selectedRadio == 1) {
               rangeSelected.style.transform = `translateX(${transformPos}px)`;
               rangeSelected.style.width = `${radiosPos[0]-transformPos}px`;
@@ -106,7 +109,7 @@ export default {
   height: 5px;
   background-color: rgb(223, 223, 223);
   border-radius: $border-radius;
-  margin: 5px;
+  margin: 20px;
   position: relative;
 
   .range-selected {
@@ -127,7 +130,7 @@ export default {
     left: -15px;
     box-shadow: 0px 0px 21px -4px #000000;
     display: flex;
-    cursor: pointer;
+    cursor: grab;
 
     i {
       margin: auto;

@@ -6,12 +6,13 @@ const routes = Router();
 
 routes.post("/", asyncHandler(async (req, res) => {
 
-    const { name, surname, email, message } = req.body;
-    await pool.query("SELECT NEW_MESSAGE($1, $2, $3, $4)", [
+    const { name, surname, email, message, car } = req.body;
+    await pool.query("SELECT NEW_MESSAGE($1, $2, $3, $4, $5)", [
         name,
         surname,
         email,
-        message
+        message,
+        car ? car : null
     ]);
 
     res.end();

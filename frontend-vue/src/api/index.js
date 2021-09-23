@@ -40,6 +40,9 @@ export default {
       id = id ? id : '';
       const { image_sid } = (await axios.get('/admin/car/image/sid/' + id)).data;
       return image_sid;
+    },
+    async getMessages() {
+      return (await axios.get('/admin/messages/')).data;
     }
   },
   async getCars(filters) {

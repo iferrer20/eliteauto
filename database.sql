@@ -112,9 +112,13 @@ CREATE TABLE admin_accounts (
 DROP TABLE IF EXISTS contact_messages;
 CREATE TABLE contact_messages (
     id SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(16),
-    surname VARCHAR(32),
-    message VARCHAR(1024)
+    name VARCHAR(16) NOT NULL,
+    surname VARCHAR(32) NOT NULL,
+    email VARCHAR(128) NOT NULL,
+    message VARCHAR(1024) NOT NULL,
+    post_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    seen BOOLEAN NOT NULL,
+    carid INT REFERENCES cars (id) ON DELETE CASCADE
 );
 
 -- Procedures
@@ -334,10 +338,13 @@ $$ LANGUAGE plpgsql;
 
 
 DROP FUNCTION IF EXISTS NEW_MESSAGE;
-CREATE FUNCTION NEW_MESSAGE(name varchar(32), surname varchar(32), email varchar(32))
+CREATE FUNCTION NEW_MESSAGE(name varchar(32), surname varchar(32), email varchar(128), message varchar(64), carid integer)
 RETURNS void
 AS $$
 BEGIN
-    INSERT INTO contact_messages VALUES (name, surname, email);
+    INSERT INTO contact_messages VALUES (DEFAULT, name, surname, email, message, DEFAULT, false, carid);
+EXCEPTION
+    WHEN foreign_key_violation THEN
+        RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
 END;
 $$ language plpgsql;

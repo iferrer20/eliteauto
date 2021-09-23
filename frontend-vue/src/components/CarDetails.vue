@@ -1,56 +1,62 @@
 
 <template>
-  <div class="details shadow" v-if="car">
-    <ImageSlider :images="[...Array(car.nimgs).keys()].map((i,c) => `/img/car/${car.id}/${c+1}.jpg`)" class="image">
-      
-    </ImageSlider>
-    
-    <div class="info">
-      <div>
-        <span>Marca</span>
-        <span>{{ car.brand }}</span>
+  <div class="details-box">
+    <template v-if="car">
+      <div class="details shadow" >
+        <ImageSlider :images="[...Array(car.nimgs).keys()].map((i,c) => `/img/car/${car.id}/${c+1}.jpg`)" class="image">
+          
+        </ImageSlider>
+        
+        <div class="info">
+          <div>
+            <span>Marca</span>
+            <span>{{ car.brand }}</span>
+          </div>
+          <div>
+            <span>Modelo</span>
+            <span>{{ car.model }}</span>
+          </div>
+          <div>
+            <span>Kilometros</span>
+            <span>{{ car.km }}</span>
+          </div>
+          <div>
+            <span>Precio</span>
+            <span>{{ car.price-car.discount }}</span>
+          </div>
+          <div>
+            <span>Potencia (cv)</span>
+            <span>{{ car.horsepower }}</span>
+          </div>
+          <div>
+            <span>Caja de cambios</span>
+            <span>{{ $t(car.transmission) }}</span>
+          </div>
+          <div>
+            <span>Motor</span>
+            <span>{{ car.engine }}</span>
+          </div>
+          <div>
+            <span>Color</span>
+            <span>{{ $t(car.color) }}</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <span>Modelo</span>
-        <span>{{ car.model }}</span>
-      </div>
-      <div>
-        <span>Kilometros</span>
-        <span>{{ car.km }}</span>
-      </div>
-      <div>
-        <span>Precio</span>
-        <span>{{ car.price-car.discount }}</span>
-      </div>
-      <div>
-        <span>Potencia (cv)</span>
-        <span>{{ car.horsepower }}</span>
-      </div>
-      <div>
-        <span>Caja de cambios</span>
-        <span>{{ $t(car.transmission) }}</span>
-      </div>
-      <div>
-        <span>Motor</span>
-        <span>{{ car.engine }}</span>
-      </div>
-      <div>
-        <span>Color</span>
-        <span>{{ $t(car.color) }}</span>
-      </div>
+      <ContactForm :car="car"></ContactForm>
+    </template>
+    <div v-else class="loader">
+
     </div>
   </div>
-  <div v-else class="loader">
-
-  </div>
-
 </template>
 
 <script>
 import ImageSlider from './ImageSlider.vue';
+import ContactForm from './ContactForm.vue';
 export default {
   components: {
-    ImageSlider
+    ImageSlider,
+    ContactForm
   },
   props: ['car'],
   setup() {
@@ -65,6 +71,13 @@ export default {
 
 <style lang="scss" scoped>
 
+.details-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .details {
   display: flex;
   flex-direction: column;
@@ -74,7 +87,7 @@ export default {
   width: 100%;
 
   .loader {
-    align-self: center;
+    margin: auto;
   }
 
   .image {
@@ -120,8 +133,6 @@ export default {
         float: right;
       }
     }
-
-    
   }
 }
 </style>

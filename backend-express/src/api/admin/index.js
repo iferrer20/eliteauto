@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import car from './car';
+import messages from './messages';
 import { RequestException, asyncHandler } from '../../exception';
 import pool from '../../db-pool';
 import { checkJWT, genJWT } from '../../utils';
@@ -17,8 +18,7 @@ routes.post("/login/", asyncHandler(async (req, res) => {
     ]);
 
     let token = genJWT({username: username});
-    res.cookie("admin_token", token);
-    
+    res.cookie("admin_token", token, {maxAge: (24 * 60 * 60 * 1000 * 365) });
     res.end();
 }));
 
@@ -31,6 +31,6 @@ routes.use("/", (req, res, next) => {
 });
 
 routes.use("/car/", car);
-
+routes.use("/messages/", messages);
 
 export default routes;

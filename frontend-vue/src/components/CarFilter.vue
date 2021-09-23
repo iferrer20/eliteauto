@@ -91,7 +91,6 @@ export default {
   .prices {
     font-weight: bold;
     width: 220px;
-    margin: 20px;
     span:nth-child(2) {
       float: right;
     }

@@ -7,20 +7,28 @@
         <div :class="{'selected': route.name == 'Cars'}">Coches</div>
       </router-link>
       <div :class="{'selected': route.name == 'Contact'}">Contacto</div>
+      <router-link :to="{ name: 'Messages' }" v-if="isAdmin">
+        <div :class="{'selected': route.name == 'Messages'}"><i class="gg-bell"></i></div>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
+import { computed } from '@vue/runtime-core';
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
   name: 'NavBar',
   setup() {
+    const store = useStore();
     const route = useRoute();
+    const isAdmin = computed(() => store.getters["user/isAdmin"]);
 
     return {
-      route
+      route,
+      isAdmin
     }
   }
 }

@@ -2,7 +2,6 @@
 <template>
   <div class="car">
     <CarDetails :car="car"></CarDetails>
-    <ContactForm :car="car"></ContactForm>
   </div>
 </template>
 
@@ -11,12 +10,10 @@ import { ref } from '@vue/reactivity';
 import { useRoute } from 'vue-router';
 import api from '../api';
 import CarDetails from '../components/CarDetails.vue';
-import ContactForm from '../components/ContactForm.vue';
 
 export default {
   components: {
-    CarDetails,
-    ContactForm
+    CarDetails
   },
   props: ['id'],
   setup() {
@@ -24,14 +21,10 @@ export default {
     const { id } = route.params;
     const car = ref(0);
 
-    setTimeout(() => {
-      api.getCar(id).then((c) => {
-        car.value = c;
-        car.value.id = id;
-      });
-    }, 500);
-    
-    
+    api.getCar(id).then((c) => {
+      car.value = c;
+      car.value.id = id;
+    });
     
     return {
       car
@@ -50,6 +43,9 @@ export default {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
+  overflow: auto;
+
+  @include scroll;
 }
 
 </style>
