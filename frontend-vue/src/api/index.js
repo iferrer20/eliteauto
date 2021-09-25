@@ -42,7 +42,13 @@ export default {
       return image_sid;
     },
     async getMessages() {
-      return (await axios.get('/admin/messages/')).data;
+      return (await axios.get('/admin/message/list/')).data;
+    },
+    async setSeenMessage(msgid) {
+      return (await axios.post('/admin/message/seen/', {message: msgid})).data;
+    },
+    async deleteMessage(msgid) {
+      return (await axios.delete('/admin/message/', {data: {message: msgid}})).data;
     }
   },
   async getCars(filters) {

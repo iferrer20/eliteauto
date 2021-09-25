@@ -46,7 +46,7 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
   width: 100%;
   
   display: flex;
-  padding: 15px;
+  padding: 10px;
   box-sizing: border-box;
   position: sticky;
   z-index: 5;

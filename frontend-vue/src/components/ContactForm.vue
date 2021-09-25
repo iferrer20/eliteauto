@@ -79,6 +79,7 @@ export default {
         });
 
         Object.keys(formData).forEach(k => formData[k] = '');
+        formData.car = props.car.id;
       }
     }
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import car from './car';
-import messages from './messages';
+import message from './message';
 import { RequestException, asyncHandler } from '../../exception';
 import pool from '../../db-pool';
 import { checkJWT, genJWT } from '../../utils';
@@ -31,6 +31,6 @@ routes.use("/", (req, res, next) => {
 });
 
 routes.use("/car/", car);
-routes.use("/messages/", messages);
+routes.use("/message/", message);
 
 export default routes;

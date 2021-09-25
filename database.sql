@@ -336,6 +336,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS LIST_MESSAGES;
+CREATE FUNCTION LIST_MESSAGES()
+RETURNS TABLE (
+    LIKE contact_messages
+)
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT * FROM contact_messages ORDER BY seen, post_date DESC;
+END;
+$$ language plpgsql;
 
 DROP FUNCTION IF EXISTS NEW_MESSAGE;
 CREATE FUNCTION NEW_MESSAGE(name varchar(32), surname varchar(32), email varchar(128), message varchar(64), carid integer)
@@ -346,5 +357,29 @@ BEGIN
 EXCEPTION
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Car not found' USING ERRCODE = '45000';
+END;
+$$ language plpgsql;
+
+DROP FUNCTION IF EXISTS SEEN_MESSAGE;
+CREATE FUNCTION SEEN_MESSAGE(msg_id integer)
+RETURNS void
+AS $$
+BEGIN
+    UPDATE contact_messages SET seen = true WHERE id = msg_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Message not found' USING ERRCODE = '45000';
+    END IF;
+END;
+$$ language plpgsql;
+
+DROP FUNCTION IF EXISTS DELETE_MESSAGE;
+CREATE FUNCTION DELETE_MESSAGE(msg_id integer)
+RETURNS void
+AS $$
+BEGIN
+    DELETE FROM contact_messages WHERE id = msg_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Message not found' USING ERRCODE = '45000';
+    END IF;
 END;
 $$ language plpgsql;
