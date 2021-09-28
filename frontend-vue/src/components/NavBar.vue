@@ -6,10 +6,29 @@
       <router-link :to="{ name: 'Cars' }">
         <div :class="{'selected': route.name == 'Cars'}">Coches</div>
       </router-link>
-      <div :class="{'selected': route.name == 'Contact'}">Contacto</div>
+      <router-link :to="{ name: 'Contact' }">
+        <div :class="{'selected': route.name == 'Contact'}">Contacto</div>
+      </router-link>
+
       <router-link :to="{ name: 'Messages' }" v-if="isAdmin">
         <div :class="{'selected': route.name == 'Messages'}"><i class="gg-bell"></i></div>
       </router-link>
+    </div>
+    <div class="company-info">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <div class="phone"><i class="gg-phone"></i> <span>633024602</span></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="location"><i class="gg-pin"></i> <span>Cita. N-340 a Llosa de Ranes (Xativa) 46800</span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -42,8 +61,9 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
 .navbar {
   overflow-x: hidden;
   background: $navbar-color;
-  height: $navbar-height;
+  height: var(--navbar-height);
   width: 100%;
+  justify-content: space-around;
   
   display: flex;
   padding: 10px;
@@ -52,6 +72,46 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
   z-index: 5;
   top: 0px;
   transition: background-color 0.2s ease-in-out;
+
+  div, img, a {
+    max-height: 50px;
+  }
+
+  .company-info {
+    margin-right: 50px;
+    min-width: 200px;
+    height: 100%;
+    color: white;
+
+    table {
+    }
+    tr {
+      margin: 50px;
+    }
+
+    i {
+      transform: scale(0.8);
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      i {
+        display: inline-block;
+      }
+      span {
+        margin-left: 10px;
+      }
+
+    }
+
+    .location {
+      i {
+        transform: scale(0.8) rotate(45deg);
+      }
+    }
+
+  }
 
   &.opacity {
     background-color: $navbar-color-opacity;
@@ -63,7 +123,6 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
     margin-right: 10px;
   }
   .logo {
-    margin-left: 20%;
     height: 100%;
 
     > img {
@@ -112,6 +171,7 @@ $navbar-color-opacity: rgba($navbar-color, 0.2);
   }
 
 @include small {
+  flex-wrap: wrap;
 
   justify-content: space-around;
   > img {

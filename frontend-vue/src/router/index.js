@@ -4,6 +4,7 @@ import Cars from '../views/Cars.vue';
 import AdminLogin from '../views/AdminLogin.vue';
 import Car from '../views/Car.vue';
 import Messages from '../views/Messages.vue';
+import Contact from '../views/Contact.vue';
 
 const routes = [
   {
@@ -19,7 +20,7 @@ const routes = [
     name: 'Cars',
     component: Cars,
     meta: {
-      title: 'Eliteauto - Coches'
+      title: 'Coches'
     }
   },
   {
@@ -36,6 +37,14 @@ const routes = [
     path: '/messages/',
     name: 'Messages',
     component: Messages
+  },
+  {
+    path: '/contacto/',
+    name: 'Contact',
+    component: Contact,
+    meta: {
+      title: 'Contacto'
+    }
   }
 ]
 
@@ -44,7 +53,18 @@ const router = createRouter({
   routes
 });
 
+function guards(to, next) {
+  if (to.name == 'Messages' && localStorage.getItem("admin") !== 'true') {
+    next({to: 'Home'});
+  } else {
+    next();
+  }
+
+}
+
 router.beforeEach((to, from, next) => {
+  
+
   // This goes through the matched routes from last to first, finding the closest route with a title.
   // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
   // `/nested`'s will be chosen.
@@ -62,11 +82,12 @@ router.beforeEach((to, from, next) => {
     document.title = previousNearestWithMeta.meta.title;
   }
 
+
   // Remove any stale meta tags from the document using the key attribute we set below.
   Array.from(document.querySelectorAll('[data-vue-router-controlled]')).map(el => el.parentNode.removeChild(el));
 
   // Skip rendering meta tags if there are none.
-  if(!nearestWithMeta) return next();
+  if(!nearestWithMeta) return guards(to, next);
 
   // Turn the meta tag definitions into actual elements in the head.
   nearestWithMeta.meta.metaTags.map(tagDef => {
@@ -84,7 +105,8 @@ router.beforeEach((to, from, next) => {
   // Add the meta tags to the document head.
   .forEach(tag => document.head.appendChild(tag));
 
-  next();
+  guards(to, next);
+
 });
 
 export default router

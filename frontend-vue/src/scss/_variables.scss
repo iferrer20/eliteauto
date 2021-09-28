@@ -1,3 +1,11 @@
 
+// Static vars
 $border-radius: 10px;
-$navbar-height: 70px;
+
+// Dynamic vars
+:root {
+    --navbar-height: 70px;
+@include small {
+    --navbar-height: 130px;
+}
+}

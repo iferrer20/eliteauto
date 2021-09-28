@@ -21,7 +21,7 @@ export default {
 <style lang="scss" scoped>
 
 .messages {
-  height: calc(100vh - #{$navbar-height});
+  height: calc(100vh - var(--navbar-height));
 }
 
 </style>

@@ -37,7 +37,7 @@ export default {
 <style lang="scss" scoped>
 
 .car {
-  height: calc(100vh - #{$navbar-height});
+  height: calc(100vh - var(--navbar-height));
   display: flex;
   align-items: center;
   flex-direction: column;

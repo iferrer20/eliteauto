@@ -143,7 +143,7 @@ export default {
 .list {
   display: flex;
   position: relative;
-  height: calc(100vh - #{$navbar-height});
+  height: calc(100vh - var(--navbar-height));
 
   .admin-menu {
     flex: 0 0 100%;
